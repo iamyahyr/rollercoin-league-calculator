@@ -1,0 +1,380 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background: linear-gradient(135deg, #1a1c29 0%, #2d2f42 100%);
+}
+
+.roller-button {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 16px;
+    background: linear-gradient(180deg, #4a9eff 0%, #2c7ae0 50%, #1e5fb8 100%);
+    border: 2px solid #5ba8ff;
+    border-radius: 6px;
+    color: white;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    overflow: hidden;
+    text-decoration: none;
+    user-select: none;
+    box-shadow: 0 4px 0 #1e5fb8, 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.roller-button:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.roller-button:hover:before {
+    left: 100%;
+}
+
+.roller-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 5px 0 #1e5fb8, 0 8px 16px rgba(0, 0, 0, 0.4);
+}
+
+.roller-button:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 #1e5fb8, 0 3px 6px rgba(0, 0, 0, 0.3);
+}
+
+.roller-button.active {
+    background: linear-gradient(180deg, #03e1e4 0%, #02c4c7 50%, #01a3a6 100%);
+    border-color: #04f1f4;
+    box-shadow: 0 4px 0 #01a3a6, 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.roller-button.active:hover {
+    box-shadow: 0 5px 0 #01a3a6, 0 8px 16px rgba(0, 0, 0, 0.4);
+}
+
+.rollercoin-card {
+    background: linear-gradient(145deg, #252841 0%, #1f2135 100%);
+    border: 2px solid #3d4162;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.rollercoin-card:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(3, 225, 228, 0.5), transparent);
+}
+
+.rollercoin-input {
+    background: linear-gradient(145deg, #1a1c29 0%, #151723 100%);
+    border: 2px solid #2d2f42;
+    border-radius: 8px;
+    color: white;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 12px 16px;
+    transition: all 0.2s ease;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.rollercoin-input:focus {
+    outline: none;
+    border-color: #03e1e4;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3), 0 0 0 3px rgba(3, 225, 228, 0.2);
+}
+
+.rollercoin-select {
+    background: linear-gradient(145deg, #1a1c29 0%, #151723 100%);
+    border: 2px solid #2d2f42;
+    border-radius: 8px;
+    color: white;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.rollercoin-select:focus {
+    outline: none;
+    border-color: #03e1e4;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3), 0 0 0 3px rgba(3, 225, 228, 0.2);
+}
+
+/* Fix for select dropdown options */
+.rollercoin-select option {
+    background: #252841;
+    color: white;
+    padding: 8px;
+    border: none;
+}
+
+.rollercoin-select option:hover,
+.rollercoin-select option:checked {
+    background: #03e1e4;
+    color: #1a1c29;
+}
+
+.league-badge {
+    background: linear-gradient(145deg, #252841 0%, #1f2135 100%);
+    border: 2px solid;
+    border-radius: 8px;
+    padding: 12px 20px;
+    font-size: 12px;
+    font-weight: 700;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.bronze { border-color: #cd7f32; color: #cd7f32; }
+.silver { border-color: #c0c0c0; color: #c0c0c0; }
+.gold { border-color: #ffd700; color: #ffd700; }
+.platinum { border-color: #e5e4e2; color: #e5e4e2; }
+.diamond { border-color: #03e1e4; color: #03e1e4; }
+
+/* Header styling */
+.rollercoin-header {
+    background: linear-gradient(135deg, #2d2f42 0%, #252841 100%);
+    border-bottom: 3px solid #03e1e4;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+/* Table styling */
+.rollercoin-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.rollercoin-table th {
+    background: linear-gradient(145deg, #2d2f42 0%, #252841 100%);
+    border-bottom: 2px solid #3d4162;
+    padding: 16px 12px;
+    text-align: center;
+    font-weight: 700;
+    font-size: 12px;
+    color: #03e1e4;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.rollercoin-table td {
+    background: linear-gradient(145deg, #1f2135 0%, #1a1c29 100%);
+    border-bottom: 1px solid #2d2f42;
+    padding: 16px 12px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.rollercoin-table tbody tr:hover td {
+    background: linear-gradient(145deg, #252841 0%, #1f2135 100%);
+}
+
+.rollercoin-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.crypto-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.crypto-icon {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.earnings-number {
+    font-weight: 600;
+    color: #03e1e4;
+    min-width: 80px;
+    text-align: right;
+}
+
+.error-message {
+    background: linear-gradient(145deg, #4a1f1f 0%, #3d1818 100%);
+    border: 2px solid #dc2626;
+    border-radius: 8px;
+    color: #fecaca;
+    padding: 12px 16px;
+    font-size: 12px;
+    font-weight: 500;
+    margin-top: 12px;
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.2);
+}
+
+.withdrawal-time {
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 11px;
+}
+
+.withdrawal-time.short { color: #10b981; }
+.withdrawal-time.medium { color: #f59e0b; }
+.withdrawal-time.long { color: #ef4444; }
+
+.tooltip-container {
+    position: relative;
+    display: inline-block;
+}
+
+.tooltip {
+    visibility: hidden;
+    opacity: 0;
+    position: fixed;
+    z-index: 9999;
+    top: 125%;
+    left: 50%;
+    transform: translateX(-50%);
+    transition: all 0.3s ease;
+    pointer-events: none;
+}
+
+.tooltip img {
+    max-width: 500px;
+    max-height: 400px;
+    border: 3px solid #03e1e4;
+    border-radius: 8px;
+    background: white;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.tooltip-container:hover .tooltip {
+    visibility: visible;
+    opacity: 1;
+}
+
+.help-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    background: linear-gradient(145deg, #3d4162 0%, #2d2f42 100%);
+    border: 2px solid #4a9eff;
+    border-radius: 50%;
+    color: #4a9eff;
+    font-size: 12px;
+    font-weight: 700;
+    margin-left: 8px;
+    cursor: help;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.help-icon:hover {
+    border-color: #03e1e4;
+    color: #03e1e4;
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(3, 225, 228, 0.3);
+}
+
+.page-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.content-wrapper {
+    flex: 1;
+}
+
+.rollercoin-footer {
+    background: linear-gradient(135deg, #252841 0%, #1f2135 100%);
+    border-top: 3px solid #03e1e4;
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.rollercoin-title {
+    color: #03e1e4;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.rollercoin-label {
+    color: #a0a3bd;
+    font-weight: 600;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #1a1c29;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(145deg, #4a9eff 0%, #03e1e4 100%);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(145deg, #03e1e4 0%, #4a9eff 100%);
+}
+
+.no-data-message {
+    background: linear-gradient(145deg, #252841 0%, #1f2135 100%);
+    border: 2px dashed #3d4162;
+    border-radius: 12px;
+    color: #a0a3bd;
+    padding: 32px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.rollercoin-input[type="number"]::-webkit-outer-spin-button,
+.rollercoin-input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.rollercoin-input[type="number"] {
+    appearance: textfield;
+    -moz-appearance: textfield;
+    -webkit-appearance: none; 
+}
+
+.footer-link {
+    color: #03e1e4;
+    font-weight: 600;
+    transition: color 0.2s ease;
+}
+
+.footer-link:hover {
+    color: #4a9eff;
+}
