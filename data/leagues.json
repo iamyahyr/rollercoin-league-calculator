@@ -1,0 +1,17 @@
+[
+    { "name": "BRONZE I", "class": "bronze", "minGH": 0, "maxGH": 5000000 },
+    { "name": "BRONZE II", "class": "bronze", "minGH": 5000000, "maxGH": 30000000 },
+    { "name": "BRONZE III", "class": "bronze", "minGH": 30000000, "maxGH": 100000000 },
+    { "name": "SILVER I", "class": "silver", "minGH": 100000000, "maxGH": 200000000 },
+    { "name": "SILVER II", "class": "silver", "minGH": 200000000, "maxGH": 500000000 },
+    { "name": "SILVER III", "class": "silver", "minGH": 500000000, "maxGH": 1000000000 },
+    { "name": "GOLD I", "class": "gold", "minGH": 1000000000, "maxGH": 2000000000 },
+    { "name": "GOLD II", "class": "gold", "minGH": 2000000000, "maxGH": 5000000000 },
+    { "name": "GOLD III", "class": "gold", "minGH": 5000000000, "maxGH": 15000000000 },
+    { "name": "PLATINUM I", "class": "platinum", "minGH": 15000000000, "maxGH": 50000000000 },
+    { "name": "PLATINUM II", "class": "platinum", "minGH": 50000000000, "maxGH": 100000000000 },
+    { "name": "PLATINUM III", "class": "platinum", "minGH": 100000000000, "maxGH": 200000000000 },
+    { "name": "DIAMOND I", "class": "diamond", "minGH": 200000000000, "maxGH": 400000000000 },
+    { "name": "DIAMOND II", "class": "diamond", "minGH": 400000000000, "maxGH": 10000000000000 },
+    { "name": "DIAMOND III", "class": "diamond", "minGH": 10000000000000, "maxGH": 100000000000000 }
+]
