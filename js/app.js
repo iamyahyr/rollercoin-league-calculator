@@ -172,22 +172,11 @@ async function loadConfig() {
             if (isNaN(num) || num == null) return '0';
             
             if (mode === 'usd' || mode === 'eur') {
-                return num.toLocaleString('en-US', { 
-                    minimumFractionDigits: 2, 
-                    maximumFractionDigits: 2 
-                });
+                return num.toFixed(2);
             }
-            
-            if (num >= 1000000) {
-                return num.toLocaleString('en-US', { 
-                    minimumFractionDigits: 0, 
-                    maximumFractionDigits: 8 
-                });
-            } else if (num >= 1) {
-                return parseFloat(num.toFixed(8)).toLocaleString('en-US', { 
-                    minimumFractionDigits: 0, 
-                    maximumFractionDigits: 8 
-                });
+
+            if (num >= 1) {
+                return parseFloat(num.toFixed(8)).toString();
             } else if (num >= 0.01) {
                 return num.toFixed(4);
             } else if (num >= 0.0001) {
