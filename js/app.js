@@ -167,21 +167,38 @@ async function loadConfig() {
     }
     }
 
-    function formatNumber(num, decimals = null, isPerBlock = false, mode = 'crypto') {
-    try {
-        if (isNaN(num) || num == null) return '0';
-        if (mode === 'usd' || mode === 'eur') return num.toFixed(2);
-
-        if (num >= 1_000_000) return (num / 1_000_000).toFixed(2) + 'M';
-        if (num >= 1_000) return (num / 1_000).toFixed(2) + 'K';
-        if (num >= 1) return num.toFixed(2);
-        if (num >= 0.01) return num.toFixed(4);
-        if (num >= 0.0001) return num.toFixed(6);
-        return num.toFixed(8);
-    } catch (e) {
-        console.error('Error formatting number:', e);
-        return '0';
-    }
+     function formatNumber(num, decimals = null, isPerBlock = false, mode = 'crypto') {
+        try {
+            if (isNaN(num) || num == null) return '0';
+            
+            if (mode === 'usd' || mode === 'eur') {
+                return num.toLocaleString('en-US', { 
+                    minimumFractionDigits: 2, 
+                    maximumFractionDigits: 2 
+                });
+            }
+            
+            if (num >= 1000000) {
+                return num.toLocaleString('en-US', { 
+                    minimumFractionDigits: 0, 
+                    maximumFractionDigits: 8 
+                });
+            } else if (num >= 1) {
+                return parseFloat(num.toFixed(8)).toLocaleString('en-US', { 
+                    minimumFractionDigits: 0, 
+                    maximumFractionDigits: 8 
+                });
+            } else if (num >= 0.01) {
+                return num.toFixed(4);
+            } else if (num >= 0.0001) {
+                return num.toFixed(6);
+            } else {
+                return num.toFixed(8);
+            }
+        } catch (e) {
+            console.error('Error formatting number:', e);
+            return '0';
+        }
     }
 
     function calculateWithdrawalTime(dailyEarning, minWithdrawal) {
