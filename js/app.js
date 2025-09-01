@@ -187,7 +187,7 @@ async function loadConfig() {
                 }
             }
 
-            const fourDecimalCoins = ['POL', 'XRP', 'DOGE', 'TRX', 'SOL', 'LTC', 'RST'];
+            const fourDecimalCoins = ['POL', 'XRP', 'DOGE', 'TRX', 'SOL', 'LTC', 'RST', 'RLT'];
             
             if (crypto && fourDecimalCoins.includes(crypto)) {
                 return num.toFixed(4);
