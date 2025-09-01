@@ -401,21 +401,36 @@ async function loadConfig() {
     }
     }
 
+
     document.addEventListener('DOMContentLoaded', function () {
-    const tooltipContainers = document.querySelectorAll('.tooltip-container');
-    tooltipContainers.forEach(container => {
-        const tooltip = container.querySelector('.tooltip');
-        container.addEventListener('mouseenter', function () {
-        const rect = container.getBoundingClientRect();
-        const tooltipRect = tooltip.getBoundingClientRect();
-        let top = rect.bottom + window.scrollY + 10;
-        let left = rect.left + window.scrollX + (rect.width / 2) - (tooltipRect.width / 2);
-        if (left + tooltipRect.width > window.innerWidth) left = window.innerWidth - tooltipRect.width - 20;
-        if (left < 20) left = 20;
-        tooltip.style.top = top + 'px';
-        tooltip.style.left = left + 'px';
+        const tooltipContainers = document.querySelectorAll('.tooltip-container');
+        
+        tooltipContainers.forEach(container => {
+            const tooltip = container.querySelector('.tooltip');
+            const helpIcon = container.querySelector('.help-icon');
+            
+            helpIcon.addEventListener('click', function(e) {
+                e.preventDefault();
+                container.classList.toggle('show');
+            });
+            
+            container.addEventListener('mouseenter', function () {
+                const rect = container.getBoundingClientRect();
+                const tooltipRect = tooltip.getBoundingClientRect();
+                let top = rect.bottom + window.scrollY + 10;
+                let left = rect.left + window.scrollX + (rect.width / 2) - (tooltipRect.width / 2);
+                if (left + tooltipRect.width > window.innerWidth) left = window.innerWidth - tooltipRect.width - 20;
+                if (left < 20) left = 20;
+                tooltip.style.top = top + 'px';
+                tooltip.style.left = left + 'px';
+            });
+            
+            document.addEventListener('click', function(e) {
+                if (!container.contains(e.target)) {
+                    container.classList.remove('show');
+                }
+            });
         });
-    });
     });
 
     document.addEventListener('DOMContentLoaded', async function () {
