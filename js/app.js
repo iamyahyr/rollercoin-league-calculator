@@ -222,8 +222,8 @@ async function loadConfig() {
         } catch (e) {
             console.error('Error calculating withdrawal time:', e);
             return { text: 'N/A', class: 'medium' };
+        }
     }
-
 
     function calculateEarnings() {
     try {
