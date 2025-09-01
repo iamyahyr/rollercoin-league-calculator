@@ -214,11 +214,20 @@ async function loadConfig() {
                 return { text: `${hours}h`, class: 'short' };
             }
             
-            const daysNeeded = Math.ceil(hoursNeeded / 24);
+            const totalHours = hoursNeeded;
+            const days = Math.floor(totalHours / 24);
+            const remainingHours = Math.ceil(totalHours % 24);
             
-            if (daysNeeded <= 7) return { text: `${daysNeeded}d`, class: 'short' };
-            if (daysNeeded <= 30) return { text: `${daysNeeded}d`, class: 'medium' };
-            return { text: `${daysNeeded}d`, class: 'long' };
+            let timeText;
+            if (remainingHours === 0) {
+                timeText = `${days}d`;
+            } else {
+                timeText = `${days}d ${remainingHours}h`;
+            }
+            
+            if (days <= 7) return { text: timeText, class: 'short' };
+            if (days <= 30) return { text: timeText, class: 'medium' };
+            return { text: timeText, class: 'long' };
         } catch (e) {
             console.error('Error calculating withdrawal time:', e);
             return { text: 'N/A', class: 'medium' };
