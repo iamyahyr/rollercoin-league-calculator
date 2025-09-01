@@ -270,6 +270,11 @@ body {
     opacity: 1;
 }
 
+.tooltip-container.show .tooltip {
+    visibility: visible;
+    opacity: 1;
+}
+
 .help-icon {
     display: inline-flex;
     align-items: center;
