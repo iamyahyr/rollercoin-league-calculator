@@ -437,6 +437,11 @@ async function loadConfig() {
             secretButton.addEventListener('click', function(e) {
                 e.preventDefault();
                 
+                const audio = new Audio('secret.mp3');
+                audio.play().catch(error => {
+                    console.error('Error playing audio:', error);
+                });
+                
                 secretOverlay.classList.remove('hidden');
                 
                 let count = 3;
