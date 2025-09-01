@@ -167,12 +167,18 @@ async function loadConfig() {
     }
     }
 
-     function formatNumber(num, decimals = null, isPerBlock = false, mode = 'crypto') {
+    function formatNumber(num, decimals = null, isPerBlock = false, mode = 'crypto', crypto = null) {
         try {
             if (isNaN(num) || num == null) return '0';
             
             if (mode === 'usd' || mode === 'eur') {
                 return num.toFixed(2);
+            }
+
+            const fourDecimalCoins = ['POL', 'XRP', 'DOGE', 'TRX', 'SOL', 'LTC', 'RST'];
+            
+            if (crypto && fourDecimalCoins.includes(crypto)) {
+                return num.toFixed(4);
             }
 
             if (num >= 1) {
@@ -337,10 +343,10 @@ async function loadConfig() {
         let perBlockDisplay, dailyDisplay, weeklyDisplay, monthlyDisplay, withdrawalDisplay;
 
         if (currentMode === 'crypto' || info.isGameToken) {
-            perBlockDisplay = `${formatNumber(earningsPerBlock)} ${info.name}`;
-            dailyDisplay = `${formatNumber(earningsPerDay)} ${info.name}`;
-            weeklyDisplay = `${formatNumber(earningsPerWeek)} ${info.name}`;
-            monthlyDisplay = `${formatNumber(earningsPerMonth)} ${info.name}`;
+            perBlockDisplay = `${formatNumber(earningsPerBlock, null, false, 'crypto', crypto)} ${info.name}`;
+            dailyDisplay = `${formatNumber(earningsPerDay, null, false, 'crypto', crypto)} ${info.name}`;
+            weeklyDisplay = `${formatNumber(earningsPerWeek, null, false, 'crypto', crypto)} ${info.name}`;
+            monthlyDisplay = `${formatNumber(earningsPerMonth, null, false, 'crypto', crypto)} ${info.name}`;
         } else if (currentMode === 'usd') {
             if (cryptoPrices[crypto] && cryptoPrices[crypto] > 0) {
             perBlockDisplay = `$${formatNumber(earningsPerBlock * cryptoPrices[crypto], null, false, 'usd')}`;
@@ -531,11 +537,11 @@ async function loadConfig() {
         initializePriceUpdates();
         calculateEarnings();
     } catch (e) {
-        console.error('Error iniciando la app:', e);
+        console.error('Error:', e);
         const noData = document.getElementById('noDataMessage');
         if (noData) {
         noData.style.display = 'block';
-        noData.textContent = 'No se pudo cargar la configuración (JSON).';
+        noData.textContent = 'Error (JSON).';
         }
     }
 });
