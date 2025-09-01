@@ -276,17 +276,20 @@ body {
 }
 
 @media (max-width: 768px) {
-    .tooltip {
+    .tooltip-container.show .tooltip,
+    .tooltip-container:hover .tooltip {
         position: fixed !important;
         top: 50% !important;
         left: 50% !important;
         transform: translate(-50%, -50%) !important;
+        z-index: 10000 !important;
     }
     
     .tooltip img {
-        max-width: 90vw;
-        max-height: 80vh;
-        object-fit: contain;
+        max-width: 85vw !important;
+        max-height: 70vh !important;
+        width: auto !important;
+        height: auto !important;
     }
 }
 
