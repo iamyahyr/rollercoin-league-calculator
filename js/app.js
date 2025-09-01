@@ -444,17 +444,20 @@ async function loadConfig() {
         const secretButton = document.getElementById('secretButton');
         const secretOverlay = document.getElementById('secretOverlay');
         const countdown = document.getElementById('countdown');
-
+    
         if (secretButton && secretOverlay && countdown) {
+            const audio = new Audio('secret.mp3');
+            audio.preload = 'auto';
+            
             secretButton.addEventListener('click', function(e) {
                 e.preventDefault();
                 
-                const audio = new Audio('secret.mp3');
+                secretOverlay.classList.remove('hidden');
+                
+                audio.currentTime = 0;
                 audio.play().catch(error => {
                     console.error('Error playing audio:', error);
                 });
-                
-                secretOverlay.classList.remove('hidden');
                 
                 let count = 3;
                 countdown.textContent = count;
@@ -470,10 +473,12 @@ async function loadConfig() {
                     }
                 }, 1000);
             });
-
+    
             secretOverlay.addEventListener('click', function(e) {
                 if (e.target === secretOverlay) {
                     secretOverlay.classList.add('hidden');
+                    audio.pause();
+                    audio.currentTime = 0;
                 }
             });
         }
