@@ -13,7 +13,7 @@ async function loadConfig() {
     ]);
 
     if (!leaguesRes.ok || !rewardsRes.ok || !blocksRes.ok || !minRes.ok) {
-        throw new Error('Error cargando archivos de configuración JSON');
+        throw new Error('Error loading JSON');
     }
 
     leagues = await leaguesRes.json();
@@ -173,6 +173,18 @@ async function loadConfig() {
             
             if (mode === 'usd' || mode === 'eur') {
                 return num.toFixed(2);
+            }
+
+            if (isPerBlock) {
+                if (num >= 1) {
+                    return parseFloat(num.toFixed(8)).toString();
+                } else if (num >= 0.01) {
+                    return num.toFixed(4);
+                } else if (num >= 0.0001) {
+                    return num.toFixed(6);
+                } else {
+                    return num.toFixed(8);
+                }
             }
 
             const fourDecimalCoins = ['POL', 'XRP', 'DOGE', 'TRX', 'SOL', 'LTC', 'RST'];
@@ -364,7 +376,7 @@ async function loadConfig() {
         let perBlockDisplay, dailyDisplay, weeklyDisplay, monthlyDisplay, withdrawalDisplay;
 
         if (currentMode === 'crypto' || info.isGameToken) {
-            perBlockDisplay = `${formatNumber(earningsPerBlock, null, false, 'crypto', crypto)} ${info.name}`;
+            perBlockDisplay = `${formatNumber(earningsPerBlock, null, true, 'crypto', crypto)} ${info.name}`;
             dailyDisplay = `${formatNumber(earningsPerDay, null, false, 'crypto', crypto)} ${info.name}`;
             weeklyDisplay = `${formatNumber(earningsPerWeek, null, false, 'crypto', crypto)} ${info.name}`;
             monthlyDisplay = `${formatNumber(earningsPerMonth, null, false, 'crypto', crypto)} ${info.name}`;
