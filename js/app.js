@@ -423,6 +423,9 @@ async function loadConfig() {
                     if (left < 20) left = 20;
                     tooltip.style.top = top + 'px';
                     tooltip.style.left = left + 'px';
+                } else {
+                    tooltip.style.top = '';
+                    tooltip.style.left = '';
                 }
             });
             
