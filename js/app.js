@@ -401,7 +401,6 @@ async function loadConfig() {
     }
     }
 
-
     document.addEventListener('DOMContentLoaded', function () {
         const tooltipContainers = document.querySelectorAll('.tooltip-container');
         
@@ -415,14 +414,16 @@ async function loadConfig() {
             });
             
             container.addEventListener('mouseenter', function () {
-                const rect = container.getBoundingClientRect();
-                const tooltipRect = tooltip.getBoundingClientRect();
-                let top = rect.bottom + window.scrollY + 10;
-                let left = rect.left + window.scrollX + (rect.width / 2) - (tooltipRect.width / 2);
-                if (left + tooltipRect.width > window.innerWidth) left = window.innerWidth - tooltipRect.width - 20;
-                if (left < 20) left = 20;
-                tooltip.style.top = top + 'px';
-                tooltip.style.left = left + 'px';
+                if (window.innerWidth > 768) {
+                    const rect = container.getBoundingClientRect();
+                    const tooltipRect = tooltip.getBoundingClientRect();
+                    let top = rect.bottom + window.scrollY + 10;
+                    let left = rect.left + window.scrollX + (rect.width / 2) - (tooltipRect.width / 2);
+                    if (left + tooltipRect.width > window.innerWidth) left = window.innerWidth - tooltipRect.width - 20;
+                    if (left < 20) left = 20;
+                    tooltip.style.top = top + 'px';
+                    tooltip.style.left = left + 'px';
+                }
             });
             
             document.addEventListener('click', function(e) {
