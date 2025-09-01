@@ -275,6 +275,21 @@ body {
     opacity: 1;
 }
 
+@media (max-width: 768px) {
+    .tooltip {
+        position: fixed !important;
+        top: 50% !important;
+        left: 50% !important;
+        transform: translate(-50%, -50%) !important;
+    }
+    
+    .tooltip img {
+        max-width: 90vw;
+        max-height: 80vh;
+        object-fit: contain;
+    }
+}
+
 .help-icon {
     display: inline-flex;
     align-items: center;
