@@ -197,21 +197,33 @@ async function loadConfig() {
     }
 
     function calculateWithdrawalTime(dailyEarning, minWithdrawal) {
-    try {
-        if (!dailyEarning || !minWithdrawal || dailyEarning <= 0 || minWithdrawal <= 0) {
-        return 'N/A';
-        }
-        const daysNeeded = Math.ceil(minWithdrawal / dailyEarning);
-        if (daysNeeded <= 7) return { text: `${daysNeeded}d`, class: 'short' };
-        if (daysNeeded <= 30) return { text: `${daysNeeded}d`, class: 'medium' };
-        if (daysNeeded <= 365) return { text: `${daysNeeded}d`, class: 'long' };
-        const years = Math.ceil(daysNeeded / 365);
-        return { text: `${years}y`, class: 'long' };
-    } catch (e) {
-        console.error('Error calculating withdrawal time:', e);
-        return { text: 'N/A', class: 'medium' };
+        try {
+            if (!dailyEarning || !minWithdrawal || dailyEarning <= 0 || minWithdrawal <= 0) {
+                return 'N/A';
+            }
+            
+            const hoursNeeded = (minWithdrawal / dailyEarning) * 24;
+            
+            if (hoursNeeded < 1) {
+                const minutesNeeded = Math.ceil(hoursNeeded * 60);
+                return { text: `${minutesNeeded}m`, class: 'short' };
+            }
+            
+            if (hoursNeeded < 24) {
+                const hours = Math.ceil(hoursNeeded);
+                return { text: `${hours}h`, class: 'short' };
+            }
+            
+            const daysNeeded = Math.ceil(hoursNeeded / 24);
+            
+            if (daysNeeded <= 7) return { text: `${daysNeeded}d`, class: 'short' };
+            if (daysNeeded <= 30) return { text: `${daysNeeded}d`, class: 'medium' };
+            return { text: `${daysNeeded}d`, class: 'long' };
+        } catch (e) {
+            console.error('Error calculating withdrawal time:', e);
+            return { text: 'N/A', class: 'medium' };
     }
-    }
+
 
     function calculateEarnings() {
     try {
