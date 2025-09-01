@@ -401,6 +401,40 @@ async function loadConfig() {
     }
     }
 
+    function initializeSecretButton() {
+        const secretButton = document.getElementById('secretButton');
+        const secretOverlay = document.getElementById('secretOverlay');
+        const countdown = document.getElementById('countdown');
+
+        if (secretButton && secretOverlay && countdown) {
+            secretButton.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                secretOverlay.classList.remove('hidden');
+                
+                let count = 3;
+                countdown.textContent = count;
+                
+                const countdownInterval = setInterval(() => {
+                    count--;
+                    if (count > 0) {
+                        countdown.textContent = count;
+                    } else {
+                        clearInterval(countdownInterval);
+                        window.open('https://minaryganar.com/', '_blank');
+                        secretOverlay.classList.add('hidden');
+                    }
+                }, 1000);
+            });
+
+            secretOverlay.addEventListener('click', function(e) {
+                if (e.target === secretOverlay) {
+                    secretOverlay.classList.add('hidden');
+                }
+            });
+        }
+    }
+    
     document.addEventListener('DOMContentLoaded', function () {
         const tooltipContainers = document.querySelectorAll('.tooltip-container');
         
@@ -492,6 +526,7 @@ async function loadConfig() {
         });
         }
 
+        initializeSecretButton();
         updateLeagueFromPower();
         initializePriceUpdates();
         calculateEarnings();
