@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,6 +14,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="css/styles.css">
 </head>
+
 <body>
     <div class="page-container">
         <div class="content-wrapper">
@@ -26,42 +28,21 @@
                     </p>
                 </div>
             </div>
-            <div class="bg-red-600 border-l-4 border-red-800 text-white p-4 mb-4">
-                <div class="max-w-6xl mx-auto">
-                    <div class="flex items-center">
-                        <div class="flex-shrink-0">
-                            <svg class="h-5 w-5 text-red-300" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
-                            </svg>
-                        </div>
-                        <div class="ml-3">
-                            <p class="text-sm font-medium">
-                                <strong>⚠️ UNDER MAINTENANCE:</strong> I'm currently fixing calculation errors. Some results may be incorrect as I didn't account for certain parameters properly. Please be patient while I resolve these issues. Sorry for the inconvenience!
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
             <div class="max-w-6xl mx-auto p-3">
-                
+
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-                    
+
                     <div class="rollercoin-card p-6">
                         <h2 class="text-lg rollercoin-title mb-3 font-bold">MINING POWER</h2>
-                        
+
                         <div class="flex gap-4 items-end mb-4">
                             <div class="flex-1">
                                 <label class="block rollercoin-label mb-2">Power:</label>
-                                <input 
-                                    type="number" 
-                                    id="miningPower"
-                                    placeholder="1.500"
-                                    class="w-full rollercoin-input"
-                                    step="0.001"
-                                />
+                                <input type="number" id="miningPower" placeholder="1.500"
+                                    class="w-full rollercoin-input" step="0.001" />
                             </div>
-                            
+
                             <div class="w-24">
                                 <label class="block rollercoin-label mb-2">Unit:</label>
                                 <select id="powerUnit" class="w-full rollercoin-select">
@@ -72,13 +53,13 @@
                                 </select>
                             </div>
                         </div>
-                        
+
                         <div class="text-center">
                             <div id="leagueBadge" class="league-badge bronze inline-block">
                                 YOUR LEAGUE: BRONZE I
                             </div>
                         </div>
-                        
+
                         <div id="powerError" class="error-message hidden">
                             Invalid mining power value
                         </div>
@@ -95,26 +76,46 @@
                             </div>
                         </h2>
                         <label class="block rollercoin-label mb-2">Paste network data:</label>
-                        <textarea 
-                            id="networkData"
-                            class="w-full rollercoin-input font-mono resize-none"
-                            rows="4"
-                        ></textarea>
-                        
+                        <textarea id="networkData" class="w-full rollercoin-input font-mono resize-none"
+                            rows="4"></textarea>
+
                         <div id="networkError" class="error-message hidden">
                             Unable to parse network data. Please check format.
                         </div>
                     </div>
                 </div>
 
+
                 <div class="rollercoin-card p-6 mb-6">
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
                         <h2 class="text-xl rollercoin-title font-bold">EARNINGS TABLE</h2>
-                        
-                        <div class="flex">
-                            <button id="btnCrypto" class="roller-button active mr-1">COINS</button>
-                            <button id="btnUSD" class="roller-button mx-1">USD</button>
-                            <button id="btnEUR" class="roller-button ml-1">EUR</button>
+
+                        <div class="flex flex-col sm:flex-row gap-4">
+                            <div class="network-toggle-group">
+                                <button id="btnNetworkTotal" class="network-toggle-btn active">Total Network</button>
+                                <button id="btnNetworkRest" class="network-toggle-btn">Rest Mode</button>
+                            </div>
+
+                            <div class="currency-toggle-group">
+                                <button id="btnCrypto" class="currency-toggle-btn active">COINS</button>
+                                <button id="btnUSD" class="currency-toggle-btn">USD</button>
+                                <button id="btnEUR" class="currency-toggle-btn">EUR</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="calcNotice"
+                        class="hidden mb-4 p-4 bg-gradient-to-r from-yellow-600 to-yellow-500 border-l-4 border-yellow-400 rounded-lg text-white shadow-lg">
+                        <div class="flex items-center">
+                            <svg class="h-5 w-5 text-yellow-200 mr-3 flex-shrink-0" fill="currentColor"
+                                viewBox="0 0 20 20">
+                                <path fill-rule="evenodd"
+                                    d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                            <div id="calcNoticeText" class="font-medium">
+                                <!-- Content will be added dynamically -->
+                            </div>
                         </div>
                     </div>
 
@@ -136,8 +137,26 @@
                         </table>
                     </div>
 
+
                     <div id="noDataMessage" class="no-data-message">
                         Enter your mining power and network data to see earnings
+                    </div>
+                </div>
+                <div class="rollercoin-card p-6 mt-6">
+                    <h2 class="text-xl rollercoin-title font-bold mb-6">YOUR LEAGUE REWARDS</h2>
+
+                    <div id="userLeagueRewards" class="user-league-display">
+                        <div class="league-header-display">
+                            <img id="userLeagueIcon" src="" alt="" class="league-icon-large">
+                            <div class="league-info-large">
+                                <h3 id="userLeagueName" class="league-name-large">BRONZE I</h3>
+                                <p class="league-subtitle">Rewards per block</p>
+                            </div>
+                        </div>
+
+                        <div id="userRewardsList" class="rewards-grid">
+                            <!-- Content will be generated by JavaScript -->
+                        </div>
                     </div>
                 </div>
             </div>
@@ -145,7 +164,8 @@
 
         <div class="rollercoin-footer p-4">
             <div class="text-center text-sm text-gray-400 font-medium">
-                RollerCoin League Calculator • Made by <a href="https://rollercoin.com/p/iamyahyr" class="footer-link" target="_blank">iamyahyr</a> for rollers ♥️
+                RollerCoin League Calculator • Made by <a href="https://rollercoin.com/p/iamyahyr" class="footer-link"
+                    target="_blank">iamyahyr</a> for rollers ♥️
                 <span class="mx-2">•</span>
                 <a href="#" id="secretButton" class="footer-link secret-button">Best RollerCoin Page</a>
             </div>
