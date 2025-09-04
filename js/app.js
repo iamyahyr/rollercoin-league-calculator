@@ -513,9 +513,11 @@ function updateUserLeagueRewards() {
 
     Object.entries(rewards).forEach(([coin, amount]) => {
         const displayAmount = formatRewardAmount(amount);
+        const blockTime = formatBlockTime(blockTimes[coin] || 10);
 
         html += `
                 <div class="reward-card">
+                    <div class="block-time-badge">${blockTime}</div>
                     <img src="crypto_icons/${coin.toLowerCase()}.png" alt="${coin}" class="reward-coin-large">
                     <div class="reward-info">
                         <p class="reward-coin-name">${coin}</p>
@@ -547,6 +549,16 @@ function formatRewardAmount(amount) {
     }
 
     return parseFloat(formatted).toString();
+}
+
+function formatBlockTime(timeInMinutes) {
+    if (!timeInMinutes || timeInMinutes <= 0) return '<img src="icons/clock.png" alt="clock" class="clock-icon">10m 0s';
+    
+    const totalSeconds = Math.round(timeInMinutes * 60);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    
+    return `<img src="icons/clock.png" alt="clock" class="clock-icon">${minutes}m ${seconds}s`;
 }
 
 function initializeSecretButton() {
