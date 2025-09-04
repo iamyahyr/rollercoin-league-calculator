@@ -597,7 +597,6 @@ body {
     width: 64px;
     height: 64px;
     border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .league-info-large {
@@ -637,6 +636,7 @@ body {
     align-items: center;
     gap: 12px;
     transition: all 0.2s ease;
+    position: relative;
 }
 
 .reward-card:hover {
@@ -736,6 +736,8 @@ body {
     text-transform: uppercase;
     letter-spacing: 0.5px;
     border-right: 1px solid #3d4162;
+    min-width: 60px;
+    flex: 1;
 }
 
 .currency-toggle-btn:last-child {
@@ -753,7 +755,6 @@ body {
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-/* Whale warning earnings style */
 .earnings-number.whale-warning {
     color: #ef4444 !important;
     font-weight: 700;
@@ -762,4 +763,45 @@ body {
 .earnings-number.normal {
     color: #03e1e4;
     font-weight: 600;
+}
+
+.block-time-badge {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background: linear-gradient(145deg, #1a1c29 0%, #151723 100%);
+    border: 1px solid #4a9eff;
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-size: 10px;
+    font-weight: 600;
+    color: #4a9eff;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    min-width: 42px;
+    text-align: center;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+}
+
+.block-time-badge:hover {
+    border-color: #03e1e4;
+    color: #03e1e4;
+    box-shadow: 0 2px 6px rgba(3, 225, 228, 0.3);
+}
+
+.clock-icon {
+    width: 10px;
+    height: 10px;
+    flex-shrink: 0;
+    filter: brightness(0) saturate(100%) invert(49%) sepia(88%) saturate(2068%) hue-rotate(199deg) brightness(101%) contrast(101%);
+    transition: filter 0.2s ease;
+}
+
+.block-time-badge:hover .clock-icon {
+    filter: brightness(0) saturate(100%) invert(68%) sepia(89%) saturate(2068%) hue-rotate(160deg) brightness(91%) contrast(101%);
 }
