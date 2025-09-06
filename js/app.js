@@ -36,7 +36,7 @@ const cryptoInfo = {
     LTC: { color: '[#345D9D]', bgColor: 'blue-600', name: 'LTC', isGameToken: false, order: 11 }
 };
 
-let cryptoPrices = { BTC: 0, ETH: 0, LTC: 0, BNB: 0, POL: 0, XRP: 0, DOGE: 0, TRX: 0, SOL: 0 };
+let cryptoPrices = {};
 let eurToUsdRate = 1.08;
 let currentMode = 'crypto';
 let networkPowers = {};
@@ -114,7 +114,12 @@ async function fetchCryptoPrices() {
         const data = await res.json();
 
         for (const [sym, id] of Object.entries(cryptoIds)) {
-            if (data[id]?.usd && !isNaN(data[id].usd)) cryptoPrices[sym] = data[id].usd;
+            if (data[id]?.usd && !isNaN(data[id].usd)) {
+                cryptoPrices[sym] = {
+                    usd: data[id].usd,
+                    eur: data[id].eur || (data[id].usd / eurToUsdRate)
+                };
+            }
         }
 
         if (data.bitcoin?.usd && data.bitcoin?.eur && data.bitcoin.eur > 0) {
@@ -126,6 +131,9 @@ async function fetchCryptoPrices() {
         if (currentLeague && Object.keys(networkPowers).length > 0) {
             displayEarnings();
         }
+
+        updatePricesTable();
+        updateWithdrawalsTable();
     } catch (e) {
         console.error('Error fetching crypto prices:', e);
     }
@@ -183,7 +191,7 @@ function formatNumber(num, decimals = null, isPerBlock = false, mode = 'crypto',
 
         if (isPerBlock) {
             if (num >= 1) {
-                return parseFloat(num.toFixed(8)).toString();
+                return parseFloat(num.toFixed(4)).toString();
             } else if (num >= 0.01) {
                 return num.toFixed(4);
             } else if (num >= 0.0001) {
@@ -211,6 +219,18 @@ function formatNumber(num, decimals = null, isPerBlock = false, mode = 'crypto',
     } catch (e) {
         console.error('Error formatting number:', e);
         return '0';
+    }
+}
+
+function formatNetworkPower(totalGH) {
+    if (totalGH >= 1_000_000_000_000) {
+        return `${formatNumber(totalGH / 1_000_000_000_000)} ZH/s`;
+    } else if (totalGH >= 1_000_000_000) {
+        return `${formatNumber(totalGH / 1_000_000_000)} EH/s`;
+    } else if (totalGH >= 1_000_000) {
+        return `${formatNumber(totalGH / 1_000_000)} PH/s`;
+    } else {
+        return `${formatNumber(totalGH)} GH/s`;
     }
 }
 
@@ -423,21 +443,28 @@ function displayEarnings() {
                 weeklyDisplay = `${formatNumber(earningsPerWeek, null, false, 'crypto', crypto)} ${info.name}`;
                 monthlyDisplay = `${formatNumber(earningsPerMonth, null, false, 'crypto', crypto)} ${info.name}`;
             } else if (currentMode === 'usd') {
-                if (cryptoPrices[crypto] && cryptoPrices[crypto] > 0) {
-                    perBlockDisplay = `$${formatNumber(earningsPerBlock * cryptoPrices[crypto], null, false, 'usd')}`;
-                    dailyDisplay = `$${formatNumber(earningsPerDay * cryptoPrices[crypto], null, false, 'usd')}`;
-                    weeklyDisplay = `$${formatNumber(earningsPerWeek * cryptoPrices[crypto], null, false, 'usd')}`;
-                    monthlyDisplay = `$${formatNumber(earningsPerMonth * cryptoPrices[crypto], null, false, 'usd')}`;
+                if (cryptoPrices[crypto]?.usd && cryptoPrices[crypto].usd > 0) {
+                    const usdPrice = cryptoPrices[crypto].usd;
+                    perBlockDisplay = `$${formatNumber(earningsPerBlock * usdPrice, null, false, 'usd')}`;
+                    dailyDisplay = `$${formatNumber(earningsPerDay * usdPrice, null, false, 'usd')}`;
+                    weeklyDisplay = `$${formatNumber(earningsPerWeek * usdPrice, null, false, 'usd')}`;
+                    monthlyDisplay = `$${formatNumber(earningsPerMonth * usdPrice, null, false, 'usd')}`;
                 } else {
                     perBlockDisplay = dailyDisplay = weeklyDisplay = monthlyDisplay = 'N/A';
                 }
             } else {
-                if (cryptoPrices[crypto] && cryptoPrices[crypto] > 0 && eurToUsdRate > 0) {
-                    const priceEUR = cryptoPrices[crypto] / eurToUsdRate;
-                    perBlockDisplay = `€${formatNumber(earningsPerBlock * priceEUR, null, false, 'eur')}`;
-                    dailyDisplay = `€${formatNumber(earningsPerDay * priceEUR, null, false, 'eur')}`;
-                    weeklyDisplay = `€${formatNumber(earningsPerWeek * priceEUR, null, false, 'eur')}`;
-                    monthlyDisplay = `€${formatNumber(earningsPerMonth * priceEUR, null, false, 'eur')}`;
+                if (cryptoPrices[crypto]?.eur && cryptoPrices[crypto].eur > 0) {
+                    const eurPrice = cryptoPrices[crypto].eur;
+                    perBlockDisplay = `€${formatNumber(earningsPerBlock * eurPrice, null, false, 'eur')}`;
+                    dailyDisplay = `€${formatNumber(earningsPerDay * eurPrice, null, false, 'eur')}`;
+                    weeklyDisplay = `€${formatNumber(earningsPerWeek * eurPrice, null, false, 'eur')}`;
+                    monthlyDisplay = `€${formatNumber(earningsPerMonth * eurPrice, null, false, 'eur')}`;
+                } else if (cryptoPrices[crypto]?.usd && cryptoPrices[crypto].usd > 0 && eurToUsdRate > 0) {
+                    const eurPrice = cryptoPrices[crypto].usd / eurToUsdRate;
+                    perBlockDisplay = `€${formatNumber(earningsPerBlock * eurPrice, null, false, 'eur')}`;
+                    dailyDisplay = `€${formatNumber(earningsPerDay * eurPrice, null, false, 'eur')}`;
+                    weeklyDisplay = `€${formatNumber(earningsPerWeek * eurPrice, null, false, 'eur')}`;
+                    monthlyDisplay = `€${formatNumber(earningsPerMonth * eurPrice, null, false, 'eur')}`;
                 } else {
                     perBlockDisplay = dailyDisplay = weeklyDisplay = monthlyDisplay = 'N/A';
                 }
@@ -452,17 +479,23 @@ function displayEarnings() {
 
             const row = document.createElement('tr');
             row.className = 'hover:bg-opacity-50 transition-all duration-200';
+
+            const networkValue = networkPower.value;
+            const networkUnit = networkPower.unit;
+            let networkDisplay = `${formatNumber(networkValue, null, false, 'crypto')} ${networkUnit}`;
+
             row.innerHTML = `
+                <td class="p-4"><div class="earnings-number" style="color: white; text-align: center;">${networkDisplay}</div></td>
                 <td class="p-4">
                 <div class="crypto-cell">
                     <img src="crypto_icons/${crypto.toLowerCase()}.png" alt="${info.name}" class="crypto-icon" onerror="this.style.display='none';">
                     <span class="font-bold" style="color: ${info.color.replace('[', '').replace(']', '')};">${info.name}</span>${coinBadge}
                 </div>
                 </td>
-                <td class="p-4"><div class="earnings-number ${earningsClass}">${perBlockDisplay}</div></td>
-                <td class="p-4"><div class="earnings-number ${earningsClass}">${dailyDisplay}</div></td>
-                <td class="p-4"><div class="earnings-number ${earningsClass}">${weeklyDisplay}</div></td>
-                <td class="p-4"><div class="earnings-number ${earningsClass}">${monthlyDisplay}</div></td>
+                <td class="p-4"><div class="earnings-number" style="color: #03e1e4;">${perBlockDisplay}</div></td>
+                <td class="p-4"><div class="earnings-number" style="color: #03e1e4;">${dailyDisplay}</div></td>
+                <td class="p-4"><div class="earnings-number" style="color: #03e1e4;">${weeklyDisplay}</div></td>
+                <td class="p-4"><div class="earnings-number" style="color: #03e1e4;">${monthlyDisplay}</div></td>
                 <td class="p-4">${withdrawalDisplay}</td>
             `;
             tableBody.appendChild(row);
@@ -479,6 +512,39 @@ function displayEarnings() {
             } else {
                 calcNotice.classList.add('hidden');
             }
+        }
+
+        let totalNetworkGH = 0;
+        availableCryptos.forEach(crypto => {
+            const networkPower = networkPowers[crypto];
+            if (networkPower) {
+                const unitRaw = (networkPower.unit || '').toUpperCase();
+                const cleanUnit = unitRaw.replace('/S', '');
+                const networkGH = convertToGH(networkPower.value, cleanUnit);
+                if (isFinite(networkGH) && networkGH > 0) {
+                    totalNetworkGH += networkGH;
+                }
+            }
+        });
+
+        if (totalNetworkGH > 0) {
+            const userPercentage = totalNetworkGH > 0 ? (userPowerGH / totalNetworkGH) * 100 : 0;
+            const percentageDisplay = userPercentage < 0.000001 ? 
+                userPercentage.toExponential(2) : 
+                userPercentage.toFixed(6);
+
+            const totalRow = document.createElement('tr');
+            totalRow.className = 'border-t-2 border-cyan-500 bg-gradient-to-r from-gray-800 to-gray-700';
+            totalRow.innerHTML = `
+                <td class="p-4 font-bold" colspan="7">
+                    <div class="text-center">
+                        <span class="earnings-number" style="color: white;">
+                            TOTAL: ${formatNetworkPower(totalNetworkGH)} | YOUR PERCENTAGE: ${percentageDisplay}%
+                        </span>
+                    </div>
+                </td>
+            `;
+            tableBody.appendChild(totalRow);
         }
 
         if (tableBody.children.length === 0) {
@@ -515,16 +581,20 @@ function updateUserLeagueRewards() {
         const displayAmount = formatRewardAmount(amount);
         const blockTime = formatBlockTime(blockTimes[coin] || 10);
 
+        const networkUrl = getCryptoNetworkUrl(coin);
         html += `
-                <div class="reward-card">
-                    <div class="block-time-badge">${blockTime}</div>
-                    <img src="crypto_icons/${coin.toLowerCase()}.png" alt="${coin}" class="reward-coin-large">
-                    <div class="reward-info">
-                        <p class="reward-coin-name">${coin}</p>
-                        <p class="reward-amount">${displayAmount}</p>
-                    </div>
+            <div class="reward-card">
+                <div class="block-time-badge">${blockTime}</div>
+                <div class="network-link-badge" onclick="window.open('${networkUrl}', '_blank')" title="View ${coin} network">
+                    <img src="icons/link.png" alt="network link" class="link-icon">
                 </div>
-            `;
+                <img src="crypto_icons/${coin.toLowerCase()}.png" alt="${coin}" class="reward-coin-large">
+                <div class="reward-info">
+                    <p class="reward-coin-name">${coin}</p>
+                    <p class="reward-amount">${displayAmount}</p>
+                </div>
+            </div>
+        `;
     });
 
     userRewardsList.innerHTML = html;
@@ -561,6 +631,10 @@ function formatBlockTime(timeInMinutes) {
     return `<img src="icons/clock.png" alt="clock" class="clock-icon">${minutes}m ${seconds}s`;
 }
 
+function getCryptoNetworkUrl(crypto) {
+    return `https://rollercoin.com/network-power/${crypto.toLowerCase()}`;
+}
+
 function initializeSecretButton() {
     const secretButton = document.getElementById('secretButton');
     const secretOverlay = document.getElementById('secretOverlay');
@@ -569,6 +643,8 @@ function initializeSecretButton() {
     if (secretButton && secretOverlay && countdown) {
         const audio = new Audio('secret.mp3');
         audio.preload = 'auto';
+        
+        let countdownInterval = null;
 
         secretButton.addEventListener('click', function (e) {
             e.preventDefault();
@@ -583,12 +659,17 @@ function initializeSecretButton() {
             let count = 3;
             countdown.textContent = count;
 
-            const countdownInterval = setInterval(() => {
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+            }
+
+            countdownInterval = setInterval(() => {
                 count--;
                 if (count > 0) {
                     countdown.textContent = count;
                 } else {
                     clearInterval(countdownInterval);
+                    countdownInterval = null;
                     window.open('https://minaryganar.com/', '_blank');
                     secretOverlay.classList.add('hidden');
                 }
@@ -597,11 +678,133 @@ function initializeSecretButton() {
 
         secretOverlay.addEventListener('click', function (e) {
             if (e.target === secretOverlay) {
+                if (countdownInterval) {
+                    clearInterval(countdownInterval);
+                    countdownInterval = null;
+                }
+                
                 secretOverlay.classList.add('hidden');
                 audio.pause();
                 audio.currentTime = 0;
             }
         });
+    }
+}
+
+function updatePricesTable() {
+    const tableBody = document.getElementById('pricesTableBody');
+    const lastUpdateElement = document.getElementById('pricesLastUpdate');
+    
+    if (!tableBody) return;
+    
+    tableBody.innerHTML = '';
+    
+    const tradableCryptos = Object.entries(cryptoInfo)
+        .filter(([crypto, info]) => !info.isGameToken && cryptoPrices[crypto])
+        .sort(([a], [b]) => cryptoInfo[a].order - cryptoInfo[b].order);
+    
+    tradableCryptos.forEach(([crypto, info]) => {
+        const prices = cryptoPrices[crypto];
+        const usdPrice = prices?.usd || 0;
+        const eurPrice = prices?.eur || 0;
+        
+        const row = document.createElement('tr');
+        row.className = 'hover:bg-opacity-50 transition-all duration-200';
+        
+        row.innerHTML = `
+            <td class="py-2 px-3">
+                <div class="coin-name-mini">
+                    <img src="crypto_icons/${crypto.toLowerCase()}.png" alt="${crypto}" class="coin-icon-mini" onerror="this.style.display='none';">
+                    <span style="color: ${info.color.replace('[', '').replace(']', '')}; font-weight: 600;">${crypto}</span>
+                </div>
+            </td>
+            <td class="py-2 px-3 text-center">
+                <span class="price-value">$${usdPrice ? formatNumber(usdPrice, null, false, 'usd') : 'N/A'}</span>
+            </td>
+            <td class="py-2 px-3 text-center">
+                <span class="price-value">€${eurPrice ? formatNumber(eurPrice, null, false, 'eur') : 'N/A'}</span>
+            </td>
+        `;
+        
+        tableBody.appendChild(row);
+    });
+    
+    if (lastUpdateElement && pricesLastUpdated > 0) {
+        const date = new Date(pricesLastUpdated);
+        const timeString = date.toLocaleTimeString();
+        lastUpdateElement.innerHTML = `Last updated: ${timeString} | <span class="text-cyan-400">Data from CoinGecko API</span>`;
+    }
+}
+
+function formatWithdrawalAmount(amount) {
+    if (isNaN(amount) || amount == null) return '0';
+    
+    const formatted = parseFloat(amount.toFixed(8));
+    return formatted.toString();
+}
+
+function updateWithdrawalsTable() {
+    const tableBody = document.getElementById('withdrawalsTableBody');
+    
+    if (!tableBody || !withdrawalMinimums) return;
+    
+    tableBody.innerHTML = '';
+    
+    const cryptosWithWithdrawal = Object.entries(withdrawalMinimums)
+        .filter(([crypto]) => cryptoInfo[crypto] && crypto !== 'LTC')
+        .sort(([a], [b]) => cryptoInfo[a].order - cryptoInfo[b].order);
+    
+    cryptosWithWithdrawal.forEach(([crypto, minAmount]) => {
+        const info = cryptoInfo[crypto];
+        const prices = cryptoPrices[crypto];
+        const usdPrice = prices?.usd || 0;
+        const eurPrice = prices?.eur || (usdPrice && eurToUsdRate > 0 ? usdPrice / eurToUsdRate : 0);
+        
+        const usdValue = usdPrice > 0 ? minAmount * usdPrice : 0;
+        const eurValue = eurPrice > 0 ? minAmount * eurPrice : 0;
+        
+        const row = document.createElement('tr');
+        row.className = 'hover:bg-opacity-50 transition-all duration-200';
+        
+        row.innerHTML = `
+            <td class="py-2 px-3">
+                <div class="coin-name-mini">
+                    <img src="crypto_icons/${crypto.toLowerCase()}.png" alt="${crypto}" class="coin-icon-mini" onerror="this.style.display='none';">
+                    <span style="color: ${info.color.replace('[', '').replace(']', '')}; font-weight: 600;">${crypto}</span>
+                </div>
+            </td>
+            <td class="py-2 px-3 text-center">
+                <span class="withdrawal-value">${formatNumber(minAmount, null, false, 'crypto', crypto)}</span>
+            </td>
+            <td class="py-2 px-3 text-center">
+                <span class="price-value">${usdValue > 0 ? '$' + formatNumber(usdValue, null, false, 'usd') : 'N/A'}</span>
+            </td>
+            <td class="py-2 px-3 text-center">
+                <span class="price-value">${eurValue > 0 ? '€' + formatNumber(eurValue, null, false, 'eur') : 'N/A'}</span>
+            </td>
+        `;
+        
+        tableBody.appendChild(row);
+    });
+    
+    if (cryptoInfo['LTC']) {
+        const info = cryptoInfo['LTC'];
+        const row = document.createElement('tr');
+        row.className = 'hover:bg-opacity-50 transition-all duration-200';
+        
+        row.innerHTML = `
+            <td class="py-2 px-3">
+                <div class="coin-name-mini">
+                    <img src="crypto_icons/ltc.png" alt="LTC" class="coin-icon-mini" onerror="this.style.display='none';">
+                    <span style="color: ${info.color.replace('[', '').replace(']', '')}; font-weight: 600;">LTC</span>
+                </div>
+            </td>
+            <td class="py-2 px-3 text-center coming-soon-withdrawal" colspan="3">
+                Withdrawable Soon
+            </td>
+        `;
+        
+        tableBody.appendChild(row);
     }
 }
 
@@ -726,6 +929,8 @@ document.addEventListener('DOMContentLoaded', async function () {
         updateLeagueFromPower();
         initializePriceUpdates();
         calculateEarnings();
+        updatePricesTable();
+        updateWithdrawalsTable();
     } catch (e) {
         console.error('Error:', e);
         const noData = document.getElementById('noDataMessage');
