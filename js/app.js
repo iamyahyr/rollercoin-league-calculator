@@ -739,8 +739,17 @@ function updatePricesTable() {
 function formatWithdrawalAmount(amount) {
     if (isNaN(amount) || amount == null) return '0';
     
-    const formatted = parseFloat(amount.toFixed(8));
-    return formatted.toString();
+    let formatted = parseFloat(amount.toFixed(8)).toString();
+    
+    if (amount % 1 === 0) {
+        return Math.floor(amount).toString();
+    }
+    
+    if (formatted.includes('.')) {
+        formatted = formatted.replace(/\.?0+$/, '');
+    }
+    
+    return formatted;
 }
 
 function updateWithdrawalsTable() {
@@ -774,7 +783,7 @@ function updateWithdrawalsTable() {
                 </div>
             </td>
             <td class="py-2 px-3 text-center">
-                <span class="withdrawal-value">${formatNumber(minAmount, null, false, 'crypto', crypto)}</span>
+                <span class="withdrawal-value">${formatWithdrawalAmount(minAmount)}</span>
             </td>
             <td class="py-2 px-3 text-center">
                 <span class="price-value">${usdValue > 0 ? '$' + formatNumber(usdValue, null, false, 'usd') : 'N/A'}</span>
