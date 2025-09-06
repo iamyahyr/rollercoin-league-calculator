@@ -396,7 +396,7 @@ body {
 
 .no-data-message {
     background: linear-gradient(145deg, #252841 0%, #1f2135 100%);
-    border: 2px dashed #3d4162;
+    border: 2px solid #3d4162;
     border-radius: 12px;
     color: #a0a3bd;
     padding: 32px;
@@ -760,11 +760,6 @@ body {
     font-weight: 700;
 }
 
-.earnings-number.normal {
-    color: #03e1e4;
-    font-weight: 600;
-}
-
 .block-time-badge {
     position: absolute;
     top: 4px;
@@ -788,12 +783,6 @@ body {
     gap: 3px;
 }
 
-.block-time-badge:hover {
-    border-color: #03e1e4;
-    color: #03e1e4;
-    box-shadow: 0 2px 6px rgba(3, 225, 228, 0.3);
-}
-
 .clock-icon {
     width: 10px;
     height: 10px;
@@ -802,6 +791,111 @@ body {
     transition: filter 0.2s ease;
 }
 
-.block-time-badge:hover .clock-icon {
+.network-link-badge {
+    position: absolute;
+    bottom: 4px;
+    right: 4px;
+    background: linear-gradient(145deg, #1a1c29 0%, #151723 100%);
+    border: 1px solid #4a9eff;
+    border-radius: 4px;
+    padding: 4px 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.network-link-badge:hover {
+    border-color: #03e1e4;
+    box-shadow: 0 2px 6px rgba(3, 225, 228, 0.3);
+    transform: scale(1.05);
+}
+
+.link-icon {
+    width: 12px;
+    height: 12px;
+    flex-shrink: 0;
+    filter: brightness(0) saturate(100%) invert(49%) sepia(88%) saturate(2068%) hue-rotate(199deg) brightness(101%) contrast(101%);
+    transition: filter 0.2s ease;
+}
+
+.network-link-badge:hover .link-icon {
     filter: brightness(0) saturate(100%) invert(68%) sepia(89%) saturate(2068%) hue-rotate(160deg) brightness(91%) contrast(101%);
+}
+
+.earnings-number.normal {
+    color: white;
+    font-weight: 600;
+}
+
+.mini-table {
+    font-size: 13px;
+}
+
+.mini-table th {
+    background: linear-gradient(145deg, #2d2f42 0%, #252841 100%);
+    color: #03e1e4;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 8px 12px;
+}
+
+.mini-table td {
+    background: linear-gradient(145deg, #1f2135 0%, #1a1c29 100%);
+    border-bottom: 1px solid #2d2f42;
+    padding: 8px 12px;
+    font-weight: 500;
+}
+
+.mini-table tbody tr:hover td {
+    background: linear-gradient(145deg, #252841 0%, #1f2135 100%);
+}
+
+.mini-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.price-value {
+    color: #10b981;
+    font-weight: 600;
+}
+
+.withdrawal-value {
+    color: #03e1e4;
+    font-weight: 600;
+}
+
+.coin-name-mini {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.coin-icon-mini {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.coming-soon-withdrawal {
+    color: #fbbf24;
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-align: center;
+}
+
+.table-fixed {
+    table-layout: fixed;
+}
+
+.table-fixed td, .table-fixed th {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
