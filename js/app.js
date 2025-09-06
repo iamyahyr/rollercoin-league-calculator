@@ -528,18 +528,13 @@ function displayEarnings() {
         });
 
         if (totalNetworkGH > 0) {
-            const userPercentage = totalNetworkGH > 0 ? (userPowerGH / totalNetworkGH) * 100 : 0;
-            const percentageDisplay = userPercentage < 0.000001 ? 
-                userPercentage.toExponential(2) : 
-                userPercentage.toFixed(6);
-
             const totalRow = document.createElement('tr');
             totalRow.className = 'border-t-2 border-cyan-500 bg-gradient-to-r from-gray-800 to-gray-700';
             totalRow.innerHTML = `
                 <td class="p-4 font-bold" colspan="7">
                     <div class="text-center">
                         <span class="earnings-number" style="color: white;">
-                            TOTAL: ${formatNetworkPower(totalNetworkGH)} | YOUR PERCENTAGE: ${percentageDisplay}%
+                            TOTAL: ${formatNetworkPower(totalNetworkGH)}
                         </span>
                     </div>
                 </td>
