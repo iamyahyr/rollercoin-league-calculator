@@ -434,7 +434,7 @@ function displayEarnings() {
                 coinBadge = ' <span class="text-yellow-400 text-xs font-bold" title="Your power > network (may have pasted rest)">⚠ WHALE</span>';
             }
             else if (networkMode === 'rest') {
-                coinBadge = ' <span class="text-blue-400 text-xs px-2 py-1 bg-blue-900 rounded font-bold" title="Rest mode: P/(P+N)">REST</span>';
+                coinBadge = ' <span class="text-blue-400 text-xs px-2 py-1 bg-blue-900 rounded font-bold" title="Rest mode: P/(P+N)">EXCLUDE ME</span>';
             }
 
             if (currentMode === 'crypto' || info.isGameToken) {
