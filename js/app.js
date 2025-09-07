@@ -504,7 +504,7 @@ function displayEarnings() {
         if (calcNotice) {
             const noticeText = document.getElementById('calcNoticeText');
             if (networkMode === 'total' && hasWhaleWarning) {
-                noticeText.innerHTML = "<strong>Whale detected!</strong> Your power exceeds the pasted network. If you pasted the <em>rest of the network</em> (excluding yourself), switch to 'Rest Mode' for accurate calculations.";
+                noticeText.innerHTML = "<strong>Whale detected!</strong> Your power exceeds the pasted network. If you pasted the <em>rest of the network</em> (excluding yourself), switch to 'EXCLUDE ME' for accurate calculations.";
                 calcNotice.classList.remove('hidden');
             } else if (networkMode === 'rest') {
                 noticeText.innerHTML = "<strong>Exclude Me Active:</strong> The pasted network does not include your power. Using P/(P + Network).";
