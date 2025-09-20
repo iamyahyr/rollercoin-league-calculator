@@ -427,18 +427,6 @@ body {
     color: #4a9eff;
 }
 
-.secret-button {
-    opacity: 0.8;
-    font-size: 12px;
-    transition: all 0.3s ease;
-}
-
-.secret-button:hover {
-    opacity: 1;
-    text-shadow: 0 0 8px rgba(3, 225, 228, 0.6);
-    transform: scale(1.05);
-}
-
 .secret-overlay {
     position: fixed;
     top: 0;
@@ -898,4 +886,47 @@ body {
 .table-fixed td, .table-fixed th {
     word-wrap: break-word;
     overflow-wrap: break-word;
+}
+
+.new-analyzer-button {
+    position: relative;
+    background: linear-gradient(135deg, #1a1c29 0%, #2d2f42 100%);
+    border: 2px solid #03e1e4;
+    border-radius: 8px;
+    padding: 12px 20px;
+    color: #03e1e4;
+    font-weight: 700;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    z-index: 2;
+}
+
+.new-analyzer-button:hover {
+    transform: translateY(-1px);
+    border-color: #4a9eff;
+    color: #4a9eff;
+}
+
+.pulsing-glow {
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    border-radius: 10px;
+    z-index: 1;
+    animation: heartbeat-glow 2s infinite;
+    pointer-events: none;
+}
+
+@keyframes heartbeat-glow {
+    0%, 100% {
+        box-shadow: 0 0 4px rgba(3, 225, 228, 0.3), 0 0 6px rgba(3, 225, 228, 0.1);
+    }
+    50% {
+        box-shadow: 0 0 8px rgba(3, 225, 228, 0.6), 0 0 12px rgba(3, 225, 228, 0.3);
+    }
 }
