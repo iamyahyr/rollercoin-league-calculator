@@ -3,7 +3,6 @@ let leagueRewards = {};
 let blockTimes = {};
 let withdrawalMinimums = {};
 
-
 async function loadConfig() {
     const [leaguesRes, rewardsRes, blocksRes, minRes] = await Promise.all([
         fetch('data/leagues.json'),
@@ -44,6 +43,46 @@ let currentLeague = null;
 let userPowerGH = 0;
 let pricesLastUpdated = 0;
 
+function saveUserData() {
+    try {
+        const userData = {
+            miningPower: document.getElementById('miningPower').value,
+            powerUnit: document.getElementById('powerUnit').value,
+            networkData: document.getElementById('networkData').value
+        };
+        localStorage.setItem('rollercoinUserData', JSON.stringify(userData));
+    } catch (e) {
+        
+    }
+}
+
+function loadUserData() {
+    try {
+        const savedData = localStorage.getItem('rollercoinUserData');
+        if (savedData) {
+            const userData = JSON.parse(savedData);
+            
+            const miningPowerInput = document.getElementById('miningPower');
+            const powerUnitSelect = document.getElementById('powerUnit');
+            const networkDataTextarea = document.getElementById('networkData');
+            
+            if (userData.miningPower && miningPowerInput) {
+                miningPowerInput.value = userData.miningPower;
+            }
+            
+            if (userData.powerUnit && powerUnitSelect) {
+                powerUnitSelect.value = userData.powerUnit;
+            }
+            
+            if (userData.networkData && networkDataTextarea) {
+                networkDataTextarea.value = userData.networkData;
+            }
+        }
+    } catch (e) {
+        
+    }
+}
+
 function parseLocaleNumber(str) {
     if (typeof str !== 'string') return NaN;
     return parseFloat(str.replace(/\s+/g, '').replace(',', '.'));
@@ -55,7 +94,6 @@ function convertToGH(power, unit) {
         const result = power * (multipliers[unit] || 1);
         return isNaN(result) ? 0 : result;
     } catch (e) {
-        console.error('Error converting power to GH:', e);
         return 0;
     }
 }
@@ -67,7 +105,6 @@ function getLeagueForPower(powerGH) {
         }
         return leagues[leagues.length - 1];
     } catch (e) {
-        console.error('Error determining league:', e);
         return leagues[0];
     }
 }
@@ -92,7 +129,6 @@ function updateLeagueFromPower() {
             updateUserLeagueRewards();
         }
     } catch (e) {
-        console.error('Error updating league from power:', e);
         currentLeague = { name: 'BRONZE I', class: 'bronze' };
         updateLeagueBadge('BRONZE I', 'bronze');
         updateUserLeagueRewards();
@@ -135,7 +171,7 @@ async function fetchCryptoPrices() {
         updatePricesTable();
         updateWithdrawalsTable();
     } catch (e) {
-        console.error('Error fetching crypto prices:', e);
+        
     }
 }
 
@@ -176,7 +212,6 @@ function parseNetworkData(data) {
 
         return powers;
     } catch (e) {
-        console.error('Error parsing network data:', e);
         return {};
     }
 }
@@ -217,7 +252,6 @@ function formatNumber(num, decimals = null, isPerBlock = false, mode = 'crypto',
             return num.toFixed(8);
         }
     } catch (e) {
-        console.error('Error formatting number:', e);
         return '0';
     }
 }
@@ -267,7 +301,6 @@ function calculateWithdrawalTime(dailyEarning, minWithdrawal) {
         if (days <= 30) return { text: timeText, class: 'medium' };
         return { text: timeText, class: 'long' };
     } catch (e) {
-        console.error('Error calculating withdrawal time:', e);
         return { text: 'N/A', class: 'medium' };
     }
 }
@@ -324,7 +357,6 @@ function calculateEarnings() {
 
         displayEarnings();
     } catch (e) {
-        console.error('Error calculating earnings:', e);
         document.getElementById('powerError').classList.remove('hidden');
     }
 }
@@ -360,7 +392,7 @@ function updateLeagueBadge(leagueName, leagueClass) {
             `;
         badge.className = `league-badge ${leagueClass} inline-block`;
     } catch (e) {
-        console.error('Error updating league badge:', e);
+        
     }
 }
 
@@ -374,7 +406,6 @@ function displayEarnings() {
         const calcNotice = document.getElementById('calcNotice');
 
         if (!rewards || !tableBody || !noDataMessage) {
-            console.error('Required DOM elements not found');
             return;
         }
 
@@ -547,7 +578,6 @@ function displayEarnings() {
             noDataMessage.textContent = 'No data available for current league or network data';
         }
     } catch (e) {
-        console.error('Error displaying earnings:', e);
         const nd = document.getElementById('noDataMessage');
         if (nd) {
             nd.style.display = 'block';
@@ -648,7 +678,7 @@ function initializeSecretButton() {
 
             audio.currentTime = 0;
             audio.play().catch(error => {
-                console.error('Error playing audio:', error);
+                
             });
 
             let count = 3;
@@ -781,7 +811,7 @@ function updateWithdrawalsTable() {
                 <span class="withdrawal-value">${formatWithdrawalAmount(minAmount)}</span>
             </td>
             <td class="py-2 px-3 text-center">
-                <span class="price-value">${usdValue > 0 ? '$' + formatNumber(usdValue, null, false, 'usd') : 'N/A'}</span>
+                <span class="price-value">$${usdValue > 0 ? formatNumber(usdValue, null, false, 'usd') : 'N/A'}</span>
             </td>
             <td class="py-2 px-3 text-center">
                 <span class="price-value">${eurValue > 0 ? '€' + formatNumber(eurValue, null, false, 'eur') : 'N/A'}</span>
@@ -853,24 +883,32 @@ document.addEventListener('DOMContentLoaded', async function () {
         await loadConfig();
 
         const miningPowerInput = document.getElementById('miningPower');
+        const powerUnitSelect = document.getElementById('powerUnit');
+        const networkDataTextarea = document.getElementById('networkData');
+
+        loadUserData();
+
         if (miningPowerInput) {
             miningPowerInput.addEventListener('input', function () {
+                saveUserData();
                 updateLeagueFromPower();
                 calculateEarnings();
             });
         }
 
-        const powerUnitSelect = document.getElementById('powerUnit');
         if (powerUnitSelect) {
             powerUnitSelect.addEventListener('change', function () {
+                saveUserData();
                 updateLeagueFromPower();
                 calculateEarnings();
             });
         }
 
-        const networkDataTextarea = document.getElementById('networkData');
         if (networkDataTextarea) {
-            networkDataTextarea.addEventListener('input', calculateEarnings);
+            networkDataTextarea.addEventListener('input', function() {
+                saveUserData();
+                calculateEarnings();
+            });
         }
 
         const btnCrypto = document.getElementById('btnCrypto');
@@ -936,7 +974,6 @@ document.addEventListener('DOMContentLoaded', async function () {
         updatePricesTable();
         updateWithdrawalsTable();
     } catch (e) {
-        console.error('Error:', e);
         const noData = document.getElementById('noDataMessage');
         if (noData) {
             noData.style.display = 'block';
