@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RollerCoin Network Growth Analyzer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <link rel="stylesheet" href="css/analyzer.css">
+</head>
+
+<body>
+    <div class="page-container">
+        <div class="content-wrapper">
+            <div class="rollercoin-header p-6">
+                <div class="max-w-7xl mx-auto">
+                    <div class="flex justify-between items-center mb-2">
+                        <a href="index.html" class="roller-button back-button">
+                            ← BACK TO CALCULATOR
+                        </a>
+                        <div class="flex-1 text-center">
+                            <h1 class="text-2xl md:text-3xl rollercoin-title">
+                                ROLLERCOIN NETWORK GROWTH ANALYZER
+                            </h1>
+                        </div>
+                        <div class="w-48"></div>
+                    </div>
+                    <p class="text-sm text-gray-400 text-center font-medium">
+                        Visualize network power growth over time
+                    </p>
+                </div>
+            </div>
+
+            <div class="max-w-7xl mx-auto p-3">
+                <div id="inputSection" class="rollercoin-card p-6 mb-6" style="position: relative;">
+                    <div class="card-content">
+                        <h2 class="text-lg rollercoin-title mb-3 font-bold">NETWORK DATA INPUT</h2>
+                        <p class="text-sm text-gray-400 mb-6">
+                            Paste at least 3 network data samples. Each one will be labeled as Day 1, Day 2, etc.
+                        </p>
+
+                        <div id="inputsContainer" class="input-grid">
+                        </div>
+
+                        <div class="mt-6 text-center">
+                            <button id="generateChart" class="roller-button generate-button hidden">
+                                GENERATE CHART
+                            </button>
+                        </div>
+
+                        <div id="inputError" class="error-message hidden">
+                            Please provide at least 3 network data samples
+                        </div>
+                    </div>
+
+                    <div class="collapse-notice hidden" id="collapseNotice">
+                        <span class="collapse-notice-text">Data panel minimized</span>
+                        <button id="expandButton" class="roller-button expand-button">
+                            EXPAND TO EDIT
+                        </button>
+                    </div>
+                </div>
+
+                <div id="chartSection" class="rollercoin-card p-6 mb-6 hidden">
+                    <h2 class="text-xl rollercoin-title font-bold mb-6">NETWORK GROWTH VISUALIZATION</h2>
+                    <div id="customLegend" class="custom-legend"></div>
+                    <div class="chart-container">
+                        <div class="chart-wrapper">
+                            <canvas id="networkChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="analysisSection" class="rollercoin-card p-6 mb-6 hidden">
+                    <h2 class="text-xl rollercoin-title font-bold mb-6">GROWTH ANALYSIS</h2>
+                    <div class="overflow-x-auto">
+                        <table class="rollercoin-table">
+                            <thead>
+                                <tr>
+                                    <th class="w-24">COIN</th>
+                                    <th class="w-32">INITIAL (ZH/s)</th>
+                                    <th class="w-32">FINAL (ZH/s)</th>
+                                    <th class="w-32">TOTAL GROWTH</th>
+                                    <th class="w-32">DAILY AVG GROWTH</th>
+                                    <th class="w-32">GROWTH RATE</th>
+                                </tr>
+                            </thead>
+                            <tbody id="analysisTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="rollercoin-footer p-4">
+            <div class="text-center text-sm text-gray-400 font-medium">
+                RollerCoin Network Growth Analyzer • Made by <a href="https://rollercoin.com/p/iamyahyr"
+                    class="footer-link" target="_blank">iamyahyr</a> for rollers ♥️
+            </div>
+        </div>
+    </div>
+
+    <script src="js/analyzer.js"></script>
+</body>
+
+</html>
