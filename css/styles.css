@@ -883,9 +883,26 @@ body {
     table-layout: fixed;
 }
 
-.table-fixed td, .table-fixed th {
+.table-fixed td,
+.table-fixed th {
     word-wrap: break-word;
     overflow-wrap: break-word;
+}
+
+.analyzer-buttons-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    align-items: center;
+    margin-top: 24px;
+}
+
+@media (min-width: 768px) {
+    .analyzer-buttons-container {
+        flex-direction: row;
+        justify-content: center;
+        gap: 24px;
+    }
 }
 
 .new-analyzer-button {
@@ -902,12 +919,92 @@ body {
     cursor: pointer;
     transition: all 0.2s ease;
     z-index: 2;
+    text-decoration: none;
+    min-width: 200px;
+    text-align: center;
 }
 
 .new-analyzer-button:hover {
     transform: translateY(-1px);
     border-color: #4a9eff;
     color: #4a9eff;
+}
+
+.transition-button {
+    position: relative;
+    background: linear-gradient(135deg, #2d1f42 0%, #42295c 100%);
+    border: 2px solid #9333ea;
+    border-radius: 8px;
+    padding: 12px 20px;
+    color: #c084fc;
+    font-weight: 700;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    z-index: 2;
+    text-decoration: none;
+    min-width: 200px;
+    text-align: center;
+}
+
+.transition-button:hover {
+    transform: translateY(-1px);
+    border-color: #a855f7;
+    color: #ddd6fe;
+}
+
+.new-badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+    font-size: 9px;
+    font-weight: 800;
+    padding: 2px 6px;
+    border-radius: 4px;
+    letter-spacing: 0.5px;
+    border: 1px solid #f87171;
+    box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
+    animation: bounce-subtle 2s infinite;
+}
+
+.pulsing-glow-new {
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    border-radius: 10px;
+    z-index: 1;
+    animation: heartbeat-glow-purple 2s infinite;
+    pointer-events: none;
+}
+
+@keyframes heartbeat-glow-purple {
+
+    0%,
+    100% {
+        box-shadow: 0 0 4px rgba(147, 51, 234, 0.3), 0 0 6px rgba(147, 51, 234, 0.1);
+    }
+
+    50% {
+        box-shadow: 0 0 8px rgba(147, 51, 234, 0.6), 0 0 12px rgba(147, 51, 234, 0.3);
+    }
+}
+
+@keyframes bounce-subtle {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-2px);
+    }
 }
 
 .pulsing-glow {
@@ -923,9 +1020,12 @@ body {
 }
 
 @keyframes heartbeat-glow {
-    0%, 100% {
+
+    0%,
+    100% {
         box-shadow: 0 0 4px rgba(3, 225, 228, 0.3), 0 0 6px rgba(3, 225, 228, 0.1);
     }
+
     50% {
         box-shadow: 0 0 8px rgba(3, 225, 228, 0.6), 0 0 12px rgba(3, 225, 228, 0.3);
     }
