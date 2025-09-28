@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RollerCoin League Transition Calculator</title>
+    <link rel="icon" type="image/png" href="icons/favicon64.png">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#03e1e4">
+    <link rel="apple-touch-icon" href="icons/favicon192.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/league-transition.css">
+</head>
+
+<body>
+    <div class="page-container">
+        <div class="content-wrapper">
+            <div class="rollercoin-header p-6">
+                <div class="max-w-6xl mx-auto">
+                    <h1 class="text-2xl md:text-3xl text-center rollercoin-title mb-2">
+                        ROLLERCOIN LEAGUE TRANSITION
+                    </h1>
+                    <p class="text-sm text-gray-400 text-center font-medium">
+                        Analyze earnings impact when transitioning between leagues
+                    </p>
+                    <div class="text-center mt-4">
+                        <a href="index.html" class="roller-button back-button">
+                            ← BACK TO MAIN CALCULATOR
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="max-w-6xl mx-auto p-3">
+                <div id="leagueSelection" class="rollercoin-card p-6 mb-6">
+                    <h2 class="text-xl rollercoin-title font-bold mb-6 text-center">SELECT YOUR CURRENT LEAGUE</h2>
+
+                    <div class="league-grid">
+                        <div class="league-tier">
+                            <h3 class="tier-title bronze">BRONZE</h3>
+                            <div class="league-options">
+                                <div class="league-option bronze" data-league="BRONZE I">
+                                    <img src="leagues/bronze_1.png" alt="Bronze I" class="league-image">
+                                    <span class="league-name">BRONZE I</span>
+                                </div>
+                                <div class="league-option bronze" data-league="BRONZE II">
+                                    <img src="leagues/bronze_2.png" alt="Bronze II" class="league-image">
+                                    <span class="league-name">BRONZE II</span>
+                                </div>
+                                <div class="league-option bronze" data-league="BRONZE III">
+                                    <img src="leagues/bronze_3.png" alt="Bronze III" class="league-image">
+                                    <span class="league-name">BRONZE III</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="league-tier">
+                            <h3 class="tier-title silver">SILVER</h3>
+                            <div class="league-options">
+                                <div class="league-option silver" data-league="SILVER I">
+                                    <img src="leagues/silver_1.png" alt="Silver I" class="league-image">
+                                    <span class="league-name">SILVER I</span>
+                                </div>
+                                <div class="league-option silver" data-league="SILVER II">
+                                    <img src="leagues/silver_2.png" alt="Silver II" class="league-image">
+                                    <span class="league-name">SILVER II</span>
+                                </div>
+                                <div class="league-option silver" data-league="SILVER III">
+                                    <img src="leagues/silver_3.png" alt="Silver III" class="league-image">
+                                    <span class="league-name">SILVER III</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="league-tier">
+                            <h3 class="tier-title gold">GOLD</h3>
+                            <div class="league-options">
+                                <div class="league-option gold" data-league="GOLD I">
+                                    <img src="leagues/gold_1.png" alt="Gold I" class="league-image">
+                                    <span class="league-name">GOLD I</span>
+                                </div>
+                                <div class="league-option gold" data-league="GOLD II">
+                                    <img src="leagues/gold_2.png" alt="Gold II" class="league-image">
+                                    <span class="league-name">GOLD II</span>
+                                </div>
+                                <div class="league-option gold" data-league="GOLD III">
+                                    <img src="leagues/gold_3.png" alt="Gold III" class="league-image">
+                                    <span class="league-name">GOLD III</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="league-tier">
+                            <h3 class="tier-title platinum">PLATINUM</h3>
+                            <div class="league-options">
+                                <div class="league-option platinum" data-league="PLATINUM I">
+                                    <img src="leagues/platinum_1.png" alt="Platinum I" class="league-image">
+                                    <span class="league-name">PLATINUM I</span>
+                                </div>
+                                <div class="league-option platinum" data-league="PLATINUM II">
+                                    <img src="leagues/platinum_2.png" alt="Platinum II" class="league-image">
+                                    <span class="league-name">PLATINUM II</span>
+                                </div>
+                                <div class="league-option platinum" data-league="PLATINUM III">
+                                    <img src="leagues/platinum_3.png" alt="Platinum III" class="league-image">
+                                    <span class="league-name">PLATINUM III</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="league-tier">
+                            <h3 class="tier-title diamond">DIAMOND</h3>
+                            <div class="league-options diamond-single">
+                                <div class="league-option diamond" data-league="DIAMOND I">
+                                    <img src="leagues/diamond_1.png" alt="Diamond I" class="league-image">
+                                    <span class="league-name">DIAMOND I</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="calculatorSection" class="hidden">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                        <div class="rollercoin-card p-6">
+                            <h2 class="text-lg rollercoin-title mb-3 font-bold">CURRENT LEAGUE NETWORK</h2>
+                            <div class="league-display mb-4">
+                                <img id="currentLeagueIcon" src="" alt="" class="league-icon-small">
+                                <span id="currentLeagueName" class="league-name-display">BRONZE I</span>
+                            </div>
+                            <label class="block rollercoin-label mb-2">Paste network data:</label>
+                            <textarea id="currentNetworkData" class="w-full rollercoin-input font-mono resize-none"
+                                rows="4" placeholder="RLT
+3.191 Zh/s
+RST
+1.880 Zh/s
+BTC
+4.178 Zh/s
+..."></textarea>
+                            <div id="currentNetworkError" class="error-message hidden">
+                                Unable to parse current league network data
+                            </div>
+                        </div>
+
+                        <div class="rollercoin-card p-6">
+                            <h2 class="text-lg rollercoin-title mb-3 font-bold">NEXT LEAGUE NETWORK</h2>
+                            <div class="league-display mb-4">
+                                <img id="nextLeagueIcon" src="" alt="" class="league-icon-small">
+                                <span id="nextLeagueName" class="league-name-display">BRONZE II</span>
+                            </div>
+                            <label class="block rollercoin-label mb-2">Paste network data:</label>
+                            <textarea id="nextNetworkData" class="w-full rollercoin-input font-mono resize-none"
+                                rows="4" placeholder="RLT
+                                3.361 Zh/s
+                                RST
+                                1.863 Zh/s
+                                BTC
+                                4.353 Zh/s
+                                ...">
+                            </textarea>
+                            <div id="nextNetworkError" class="error-message hidden">
+                                Unable to parse next league network data
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                    <div id="blockRewardsSection" class="rollercoin-card p-6 mb-6 hidden">
+                        <h2 class="text-xl rollercoin-title font-bold mb-6">BLOCK REWARDS COMPARISON</h2>
+
+                        <div class="leagues-comparison-header">
+                            <div class="league-comparison-item">
+                                <img id="currentLeagueIconRewards" src="" alt="" class="league-icon-medium">
+                                <span id="currentLeagueNameRewards" class="league-name-medium">BRONZE I</span>
+                            </div>
+                            <div class="comparison-arrow">
+                                <span class="arrow-large">→</span>
+                            </div>
+                            <div class="league-comparison-item">
+                                <img id="nextLeagueIconRewards" src="" alt="" class="league-icon-medium">
+                                <span id="nextLeagueNameRewards" class="league-name-medium">BRONZE II</span>
+                            </div>
+                        </div>
+
+                        <div id="rewardsComparison" class="rewards-comparison-grid">
+
+                        </div>
+                    </div>
+
+                    <div class="rollercoin-card p-6 mb-6 mt-6">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+                            <div class="flex items-center gap-4">
+                                <h2 class="text-xl rollercoin-title font-bold">TRANSITION ANALYSIS</h2>
+                                <button id="backToSelection" class="back-to-selection-btn">
+                                    ← CHANGE LEAGUES
+                                </button>
+                            </div>
+                            <div class="currency-toggle-group">
+                                <button id="btnCrypto" class="currency-toggle-btn active">COINS</button>
+                                <button id="btnUSD" class="currency-toggle-btn">USD</button>
+                                <button id="btnEUR" class="currency-toggle-btn">EUR</button>
+                            </div>
+                        </div>
+
+                        <div class="overflow-x-auto">
+                            <table class="rollercoin-table">
+                                <thead>
+                                    <tr>
+                                        <th class="w-24">COIN</th>
+                                        <th class="w-32">CURRENT MAX<br><small id="currentMaxDesc"
+                                                class="text-xxs font-normal opacity-75">(Daily earnings at max
+                                                power)</small></th>
+                                        <th class="w-32">NEXT MIN<br><small id="nextMinDesc"
+                                                class="text-xxs font-normal opacity-75">(Daily earnings at min
+                                                power)</small></th>
+                                        <th class="w-32">DIFFERENCE</th>
+                                        <th class="w-24">LOSS %</th>
+                                        <th class="w-32">BREAK-EVEN POWER<br><small
+                                                class="text-xxs font-normal opacity-75">(Power needed to match
+                                                current)</small></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="transitionTableBody">
+                                </tbody>
+                                <tfoot id="transitionTableFoot" class="hidden">
+                                    <tr class="average-row">
+                                        <td colspan="6">
+                                            <div class="flex justify-center items-center gap-4">
+                                                <span class="text-sm font-bold">AVERAGE BREAK-EVEN:</span>
+                                                <span id="averageBreakEven" class="text-lg font-bold">57.043 EH/s</span>
+                                                <span class="text-xs opacity-75">Average power across all coins</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+
+                        <div id="noTransitionData" class="no-data-message">
+                            Select a league and enter network data to see transition analysis
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="rollercoin-footer p-4">
+            <div class="text-center text-sm text-gray-400 font-medium">
+                RollerCoin League Transition • Made by <a href="https://rollercoin.com/p/iamyahyr" class="footer-link"
+                    target="_blank">iamyahyr</a> for rollers ♥️
+            </div>
+        </div>
+    </div>
+
+    <script src="js/league-transition.js"></script>
+</body>
+
+</html>
