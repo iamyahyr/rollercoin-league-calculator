@@ -150,10 +150,10 @@ async function fetchCryptoPrices() {
         const data = await res.json();
 
         for (const [sym, id] of Object.entries(cryptoIds)) {
-            if (data[id]?.usd && !isNaN(data[id].usd)) {
+            if (data[id]?.usd && !isNaN(data[id].usd) && data[id]?.eur && !isNaN(data[id].eur)) {
                 cryptoPrices[sym] = {
                     usd: data[id].usd,
-                    eur: data[id].eur || (data[id].usd / eurToUsdRate)
+                    eur: data[id].eur
                 };
             }
         }
