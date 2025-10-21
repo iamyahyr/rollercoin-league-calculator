@@ -395,8 +395,17 @@ function displayTransitionResults(currentMaxEarnings, nextMinEarnings, currentMa
             const breakEvenMultiplier = currentValue > 0 && nextValue > 0 ? currentValue / nextValue : 1;
             const breakEvenPower = nextMinPower * breakEvenMultiplier;
             breakEvenPowers.push(breakEvenPower);
-            breakEvenDisplay = `<div class="power-recommendation">${formatPowerDisplayLimited(breakEvenPower)}</div>`;
+            
+            const exceedsMax = breakEvenPower > nextLeague.maxGH;
+            
+            breakEvenDisplay = `
+                <div class="power-recommendation">
+                    ${formatPowerDisplayLimited(breakEvenPower)}
+                    ${exceedsMax ? '<div class="break-even-warning">⚠️ Must advance more leagues</div>' : ''}
+                </div>
+            `;
         }
+
 
         const row = document.createElement('tr');
         row.innerHTML = `
@@ -489,10 +498,19 @@ function displayBlockRewards() {
     document.getElementById('nextLeagueNameRewards').textContent = nextLeague.name;
     document.getElementById('currentLeagueIconRewards').src = getLeagueImagePath(currentLeague.name);
     document.getElementById('nextLeagueIconRewards').src = getLeagueImagePath(nextLeague.name);
+    
+    // Add power ranges below league names
+    const currentRange = `${formatPowerDisplayLimited(currentLeague.minGH)} - ${formatPowerDisplayLimited(currentLeague.maxGH)}`;
+    const nextRange = `${formatPowerDisplayLimited(nextLeague.minGH)} - ${formatPowerDisplayLimited(nextLeague.maxGH)}`;
+    
+    document.getElementById('currentLeaguePowerRange').textContent = currentRange;
+    document.getElementById('nextLeaguePowerRange').textContent = nextRange;
+    
     document.getElementById('rewardsComparison').innerHTML = rewardsHtml;
 
     blockRewardsSection.classList.remove('hidden');
 }
+
 
 function updateTransitionSummary(breakEvenPowers) {
     if (breakEvenPowers.length === 0) {
