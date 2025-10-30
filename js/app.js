@@ -32,7 +32,8 @@ const cryptoInfo = {
     DOGE: { color: '[#C2A633]', bgColor: 'yellow-600', name: 'DOGE', isGameToken: false, order: 8 },
     TRX: { color: '[#D3392F]', bgColor: 'red-500', name: 'TRX', isGameToken: false, order: 9 },
     SOL: { color: '[#21EBAA]', bgColor: 'green-400', name: 'SOL', isGameToken: false, order: 10 },
-    LTC: { color: '[#345D9D]', bgColor: 'blue-600', name: 'LTC', isGameToken: false, order: 11 }
+    LTC: { color: '[#345D9D]', bgColor: 'blue-600', name: 'LTC', isGameToken: false, order: 11 },
+    ALGO: { color: '[#FF3E9A]', bgColor: 'pink-500', name: 'ALGO', isGameToken: false, order: 12 }
 };
 
 let cryptoPrices = {};
@@ -140,7 +141,7 @@ async function fetchCryptoPrices() {
         const cryptoIds = {
             BTC: 'bitcoin', ETH: 'ethereum', LTC: 'litecoin', BNB: 'binancecoin',
             POL: 'polygon-ecosystem-token', XRP: 'ripple', DOGE: 'dogecoin',
-            TRX: 'tron', SOL: 'solana'
+            TRX: 'tron', SOL: 'solana', ALGO: 'algorand'
         };
 
         const ids = Object.values(cryptoIds).join(',');
@@ -236,7 +237,7 @@ function formatNumber(num, decimals = null, isPerBlock = false, mode = 'crypto',
             }
         }
 
-        const fourDecimalCoins = ['POL', 'XRP', 'DOGE', 'TRX', 'SOL', 'LTC', 'RST', 'RLT'];
+        const fourDecimalCoins = ['POL', 'XRP', 'DOGE', 'TRX', 'SOL', 'LTC', 'RST', 'RLT', 'ALGO'];
 
         if (crypto && fourDecimalCoins.includes(crypto)) {
             return num.toFixed(4);
@@ -831,6 +832,26 @@ function updateWithdrawalsTable() {
                 <div class="coin-name-mini">
                     <img src="crypto_icons/ltc.png" alt="LTC" class="coin-icon-mini" onerror="this.style.display='none';">
                     <span style="color: ${info.color.replace('[', '').replace(']', '')}; font-weight: 600;">LTC</span>
+                </div>
+            </td>
+            <td class="py-2 px-3 text-center coming-soon-withdrawal" colspan="3">
+                Withdrawable Soon
+            </td>
+        `;
+        
+        tableBody.appendChild(row);
+    }
+
+    if (cryptoInfo['ALGO']) {
+        const info = cryptoInfo['ALGO'];
+        const row = document.createElement('tr');
+        row.className = 'hover:bg-opacity-50 transition-all duration-200';
+        
+        row.innerHTML = `
+            <td class="py-2 px-3">
+                <div class="coin-name-mini">
+                    <img src="crypto_icons/algo.png" alt="ALGO" class="coin-icon-mini" onerror="this.style.display='none';">
+                    <span style="color: ${info.color.replace('[', '').replace(']', '')}; font-weight: 600;">ALGO</span>
                 </div>
             </td>
             <td class="py-2 px-3 text-center coming-soon-withdrawal" colspan="3">

@@ -10,7 +10,8 @@ const cryptoInfo = {
     DOGE: { color: '#C2A633', name: 'DOGE', order: 8, icon: 'crypto_icons/doge.png' },
     TRX: { color: '#D3392F', name: 'TRX', order: 9, icon: 'crypto_icons/trx.png' },
     SOL: { color: '#21EBAA', name: 'SOL', order: 10, icon: 'crypto_icons/sol.png' },
-    LTC: { color: '#345D9D', name: 'LTC', order: 11, icon: 'crypto_icons/ltc.png' }
+    LTC: { color: '#345D9D', name: 'LTC', order: 11, icon: 'crypto_icons/ltc.png' },
+    ALGO: { color: '#FF3E9A', name: 'ALGO', order: 12, icon: 'crypto_icons/algo.png' } 
 };
 
 let networkDataHistory = [];

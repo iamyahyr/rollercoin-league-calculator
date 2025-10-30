@@ -13,7 +13,8 @@ const cryptoInfo = {
     DOGE: { color: '#C2A633', name: 'DOGE', isGameToken: false, order: 8 },
     TRX: { color: '#D3392F', name: 'TRX', isGameToken: false, order: 9 },
     SOL: { color: '#21EBAA', name: 'SOL', isGameToken: false, order: 10 },
-    LTC: { color: '#345D9D', name: 'LTC', isGameToken: false, order: 11 }
+    LTC: { color: '#345D9D', name: 'LTC', isGameToken: false, order: 11 },
+    ALGO: { color: '#FF3E9A', name: 'ALGO', isGameToken: false, order: 12 }
 };
 
 let currentLeague = null;
@@ -139,7 +140,7 @@ function formatNumber(num, decimals = null, isPerBlock = false, mode = 'crypto',
             }
         }
 
-        const fourDecimalCoins = ['POL', 'XRP', 'DOGE', 'TRX', 'SOL', 'LTC', 'RST', 'RLT'];
+        const fourDecimalCoins = ['POL', 'XRP', 'DOGE', 'TRX', 'SOL', 'LTC', 'RST', 'RLT', 'ALGO']; 
 
         if (crypto && fourDecimalCoins.includes(crypto)) {
             return num.toFixed(4);
@@ -406,7 +407,6 @@ function displayTransitionResults(currentMaxEarnings, nextMinEarnings, currentMa
             `;
         }
 
-
         const row = document.createElement('tr');
         row.innerHTML = `
             <td class="p-4">
@@ -499,7 +499,6 @@ function displayBlockRewards() {
     document.getElementById('currentLeagueIconRewards').src = getLeagueImagePath(currentLeague.name);
     document.getElementById('nextLeagueIconRewards').src = getLeagueImagePath(nextLeague.name);
     
-    // Add power ranges below league names
     const currentRange = `${formatPowerDisplayLimited(currentLeague.minGH)} - ${formatPowerDisplayLimited(currentLeague.maxGH)}`;
     const nextRange = `${formatPowerDisplayLimited(nextLeague.minGH)} - ${formatPowerDisplayLimited(nextLeague.maxGH)}`;
     
@@ -510,7 +509,6 @@ function displayBlockRewards() {
 
     blockRewardsSection.classList.remove('hidden');
 }
-
 
 function updateTransitionSummary(breakEvenPowers) {
     if (breakEvenPowers.length === 0) {
@@ -527,7 +525,7 @@ async function fetchCryptoPrices() {
         const cryptoIds = {
             BTC: 'bitcoin', ETH: 'ethereum', LTC: 'litecoin', BNB: 'binancecoin',
             POL: 'polygon-ecosystem-token', XRP: 'ripple', DOGE: 'dogecoin',
-            TRX: 'tron', SOL: 'solana'
+            TRX: 'tron', SOL: 'solana', ALGO: 'algorand' 
         };
 
         const ids = Object.values(cryptoIds).join(',');
