@@ -5,16 +5,17 @@ let blockTimes = {};
 const cryptoInfo = {
     RLT: { color: '#03E1E4', name: 'RLT', isGameToken: true, order: 1 },
     RST: { color: '#FFDC00', name: 'RST', isGameToken: true, order: 2 },
-    BTC: { color: '#F7931A', name: 'BTC', isGameToken: false, order: 3 },
-    ETH: { color: '#987EFF', name: 'ETH', isGameToken: false, order: 4 },
-    BNB: { color: '#F3BA2F', name: 'BNB', isGameToken: false, order: 5 },
-    POL: { color: '#8247E5', name: 'POL', isGameToken: false, order: 6 },
-    XRP: { color: '#E5E6E7', name: 'XRP', isGameToken: false, order: 7 },
-    DOGE: { color: '#C2A633', name: 'DOGE', isGameToken: false, order: 8 },
-    TRX: { color: '#D3392F', name: 'TRX', isGameToken: false, order: 9 },
-    SOL: { color: '#21EBAA', name: 'SOL', isGameToken: false, order: 10 },
-    LTC: { color: '#345D9D', name: 'LTC', isGameToken: false, order: 11 },
-    ALGO: { color: '#FF3E9A', name: 'ALGO', isGameToken: false, order: 12 }
+    HMT: { color: '#C954FF', name: 'HMT', isGameToken: true, order: 3 },
+    BTC: { color: '#F7931A', name: 'BTC', isGameToken: false, order: 4 },
+    ETH: { color: '#987EFF', name: 'ETH', isGameToken: false, order: 5 },
+    BNB: { color: '#F3BA2F', name: 'BNB', isGameToken: false, order: 6 },
+    POL: { color: '#8247E5', name: 'POL', isGameToken: false, order: 7 },
+    XRP: { color: '#E5E6E7', name: 'XRP', isGameToken: false, order: 8 },
+    DOGE: { color: '#C2A633', name: 'DOGE', isGameToken: false, order: 9 },
+    TRX: { color: '#D3392F', name: 'TRX', isGameToken: false, order: 10 },
+    SOL: { color: '#21EBAA', name: 'SOL', isGameToken: false, order: 11 },
+    LTC: { color: '#345D9D', name: 'LTC', isGameToken: false, order: 12 },
+    ALGO: { color: '#FF3E9A', name: 'ALGO', isGameToken: false, order: 13 }
 };
 
 let currentLeague = null;
@@ -140,7 +141,7 @@ function formatNumber(num, decimals = null, isPerBlock = false, mode = 'crypto',
             }
         }
 
-        const fourDecimalCoins = ['POL', 'XRP', 'DOGE', 'TRX', 'SOL', 'LTC', 'RST', 'RLT', 'ALGO']; 
+        const fourDecimalCoins = ['POL', 'XRP', 'DOGE', 'TRX', 'SOL', 'LTC', 'RST', 'RLT', 'ALGO', 'HMT']; 
 
         if (crypto && fourDecimalCoins.includes(crypto)) {
             return num.toFixed(4);

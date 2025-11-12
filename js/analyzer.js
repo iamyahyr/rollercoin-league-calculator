@@ -1,17 +1,18 @@
 const cryptoInfo = {
     RLT: { color: '#03E1E4', name: 'RLT', order: 1, icon: 'crypto_icons/rlt.png' },
     RST: { color: '#FFDC00', name: 'RST', order: 2, icon: 'crypto_icons/rst.png' },
-    BTC: { color: '#F7931A', name: 'BTC', order: 3, icon: 'crypto_icons/btc.png' },
-    ETH: { color: '#987EFF', name: 'ETH', order: 4, icon: 'crypto_icons/eth.png' },
-    BNB: { color: '#F3BA2F', name: 'BNB', order: 5, icon: 'crypto_icons/bnb.png' },
-    POL: { color: '#8247E5', name: 'POL', order: 6, icon: 'crypto_icons/pol.png' },
-    MATIC: { color: '#8247E5', name: 'POL', order: 6, icon: 'crypto_icons/pol.png' },
-    XRP: { color: '#E5E6E7', name: 'XRP', order: 7, icon: 'crypto_icons/xrp.png' },
-    DOGE: { color: '#C2A633', name: 'DOGE', order: 8, icon: 'crypto_icons/doge.png' },
-    TRX: { color: '#D3392F', name: 'TRX', order: 9, icon: 'crypto_icons/trx.png' },
-    SOL: { color: '#21EBAA', name: 'SOL', order: 10, icon: 'crypto_icons/sol.png' },
-    LTC: { color: '#345D9D', name: 'LTC', order: 11, icon: 'crypto_icons/ltc.png' },
-    ALGO: { color: '#FF3E9A', name: 'ALGO', order: 12, icon: 'crypto_icons/algo.png' } 
+    HMT: { color: '#C954FF', name: 'HMT', order: 3, icon: 'crypto_icons/hmt.png' },
+    BTC: { color: '#F7931A', name: 'BTC', order: 4, icon: 'crypto_icons/btc.png' },
+    ETH: { color: '#987EFF', name: 'ETH', order: 5, icon: 'crypto_icons/eth.png' },
+    BNB: { color: '#F3BA2F', name: 'BNB', order: 6, icon: 'crypto_icons/bnb.png' },
+    POL: { color: '#8247E5', name: 'POL', order: 7, icon: 'crypto_icons/pol.png' },
+    MATIC: { color: '#8247E5', name: 'POL', order: 7, icon: 'crypto_icons/pol.png' },
+    XRP: { color: '#E5E6E7', name: 'XRP', order: 8, icon: 'crypto_icons/xrp.png' },
+    DOGE: { color: '#C2A633', name: 'DOGE', order: 9, icon: 'crypto_icons/doge.png' },
+    TRX: { color: '#D3392F', name: 'TRX', order: 10, icon: 'crypto_icons/trx.png' },
+    SOL: { color: '#21EBAA', name: 'SOL', order: 11, icon: 'crypto_icons/sol.png' },
+    LTC: { color: '#345D9D', name: 'LTC', order: 12, icon: 'crypto_icons/ltc.png' },
+    ALGO: { color: '#FF3E9A', name: 'ALGO', order: 13, icon: 'crypto_icons/algo.png' }
 };
 
 let networkDataHistory = [];
