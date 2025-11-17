@@ -54,7 +54,7 @@ function saveUserData() {
         };
         localStorage.setItem('rollercoinUserData', JSON.stringify(userData));
     } catch (e) {
-        
+
     }
 }
 
@@ -63,25 +63,25 @@ function loadUserData() {
         const savedData = localStorage.getItem('rollercoinUserData');
         if (savedData) {
             const userData = JSON.parse(savedData);
-            
+
             const miningPowerInput = document.getElementById('miningPower');
             const powerUnitSelect = document.getElementById('powerUnit');
             const networkDataTextarea = document.getElementById('networkData');
-            
+
             if (userData.miningPower && miningPowerInput) {
                 miningPowerInput.value = userData.miningPower;
             }
-            
+
             if (userData.powerUnit && powerUnitSelect) {
                 powerUnitSelect.value = userData.powerUnit;
             }
-            
+
             if (userData.networkData && networkDataTextarea) {
                 networkDataTextarea.value = userData.networkData;
             }
         }
     } catch (e) {
-        
+
     }
 }
 
@@ -122,7 +122,7 @@ function updateLeagueFromPower() {
         if (power && power > 0) {
             const powerGH = convertToGH(power, unit);
             const league = getLeagueForPower(powerGH);
-            currentLeague = league; 
+            currentLeague = league;
             updateLeagueBadge(league.name, league.class);
             updateUserLeagueRewards();
         } else {
@@ -173,7 +173,7 @@ async function fetchCryptoPrices() {
         updatePricesTable();
         updateWithdrawalsTable();
     } catch (e) {
-        
+
     }
 }
 
@@ -218,55 +218,44 @@ function parseNetworkData(data) {
     }
 }
 
-function formatNumber(num, decimals = null, isPerBlock = false, mode = 'crypto', crypto = null) {
-    try {
-        if (isNaN(num) || num == null) return '0';
+function formatNumber(num, decimals = null, isPerBlock = false, mode = "crypto", crypto = null, isNetwork = false) {
+    if (isNaN(num) || num === null) return "0";
 
-        if (mode === 'usd' || mode === 'eur') {
-            return num.toFixed(2);
-        }
+    if (isNetwork) return num.toFixed(3);
 
-        if (isPerBlock) {
-            if (num >= 1) {
-                return parseFloat(num.toFixed(4)).toString();
-            } else if (num >= 0.01) {
-                return num.toFixed(4);
-            } else if (num >= 0.0001) {
-                return num.toFixed(6);
-            } else {
-                return num.toFixed(8);
-            }
-        }
+    if (mode === "usd" || mode === "eur") return num.toFixed(2);
 
-        const fourDecimalCoins = ['POL', 'XRP', 'DOGE', 'TRX', 'SOL', 'LTC', 'RST', 'RLT', 'ALGO', 'HMT'];
+    const decimalsByCrypto = {
+        "RLT": 6,
+        "RST": 6,
+        "HMT": 6,
+        "XRP": 6,
+        "ALGO": 6,
+        "TRX": 8,
+        "DOGE": 4,
+        "BTC": 10,
+        "ETH": 8,
+        "BNB": 8,
+        "POL": 8,
+        "SOL": 8,
+        "LTC": 8
+    };
 
-        if (crypto && fourDecimalCoins.includes(crypto)) {
-            return num.toFixed(4);
-        }
+    let maxDecimals = decimalsByCrypto[crypto] ?? 8;
+    if (typeof decimals === "number" && decimals > 0) maxDecimals = decimals;
 
-        if (num >= 1) {
-            return parseFloat(num.toFixed(8)).toString();
-        } else if (num >= 0.01) {
-            return num.toFixed(4);
-        } else if (num >= 0.0001) {
-            return num.toFixed(6);
-        } else {
-            return num.toFixed(8);
-        }
-    } catch (e) {
-        return '0';
-    }
+    return num.toFixed(maxDecimals);
 }
 
 function formatNetworkPower(totalGH) {
     if (totalGH >= 1_000_000_000_000) {
-        return `${formatNumber(totalGH / 1_000_000_000_000)} ZH/s`;
+        return `${parseFloat((totalGH / 1_000_000_000_000).toFixed(3))} Zh/s`;
     } else if (totalGH >= 1_000_000_000) {
-        return `${formatNumber(totalGH / 1_000_000_000)} EH/s`;
+        return `${parseFloat((totalGH / 1_000_000_000).toFixed(3))} Eh/s`;
     } else if (totalGH >= 1_000_000) {
-        return `${formatNumber(totalGH / 1_000_000)} PH/s`;
+        return `${parseFloat((totalGH / 1_000_000).toFixed(3))} Ph/s`;
     } else {
-        return `${formatNumber(totalGH)} GH/s`;
+        return `${parseFloat(totalGH.toFixed(3))} Gh/s`;
     }
 }
 
@@ -394,7 +383,7 @@ function updateLeagueBadge(leagueName, leagueClass) {
             `;
         badge.className = `league-badge ${leagueClass} inline-block`;
     } catch (e) {
-        
+
     }
 }
 
@@ -471,10 +460,10 @@ function displayEarnings() {
             }
 
             if (currentMode === 'crypto' || info.isGameToken) {
-                perBlockDisplay = `${formatNumber(earningsPerBlock, null, true, 'crypto', crypto)} ${info.name}`;
-                dailyDisplay = `${formatNumber(earningsPerDay, null, false, 'crypto', crypto)} ${info.name}`;
-                weeklyDisplay = `${formatNumber(earningsPerWeek, null, false, 'crypto', crypto)} ${info.name}`;
-                monthlyDisplay = `${formatNumber(earningsPerMonth, null, false, 'crypto', crypto)} ${info.name}`;
+                perBlockDisplay = `${formatCryptoAmount(earningsPerBlock, crypto)} ${info.name}`;
+                dailyDisplay = `${formatCryptoAmount(earningsPerDay, crypto)} ${info.name}`;
+                weeklyDisplay = `${formatCryptoAmount(earningsPerWeek, crypto)} ${info.name}`;
+                monthlyDisplay = `${formatCryptoAmount(earningsPerMonth, crypto)} ${info.name}`;
             } else if (currentMode === 'usd') {
                 if (cryptoPrices[crypto]?.usd && cryptoPrices[crypto].usd > 0) {
                     const usdPrice = cryptoPrices[crypto].usd;
@@ -515,7 +504,12 @@ function displayEarnings() {
 
             const networkValue = networkPower.value;
             const networkUnit = networkPower.unit;
-            let networkDisplay = `${formatNumber(networkValue, null, false, 'crypto')} ${networkUnit}`;
+            let networkDisplay = `${parseFloat(networkValue.toFixed(3))} ${renderNetworkUnit(networkUnit)}`;
+
+            function renderNetworkUnit(unit) {
+                unit = unit.replace(/\/s/i, '');
+                return unit.charAt(0).toUpperCase() + "h/s";
+            }
 
             row.innerHTML = `
                 <td class="p-4"><div class="earnings-number" style="color: white; text-align: center;">${networkDisplay}</div></td>
@@ -605,7 +599,7 @@ function updateUserLeagueRewards() {
     let html = '';
 
     Object.entries(rewards).forEach(([coin, amount]) => {
-        const displayAmount = formatRewardAmount(amount);
+        const displayAmount = formatCryptoAmount(amount, coin);
         const blockTime = formatBlockTime(blockTimes[coin] || 10);
 
         const networkUrl = getCryptoNetworkUrl(coin);
@@ -627,34 +621,37 @@ function updateUserLeagueRewards() {
     userRewardsList.innerHTML = html;
 }
 
-function formatRewardAmount(amount) {
-    if (isNaN(amount) || amount == null) return '0';
-
-    if (amount % 1 === 0) {
-        return amount.toString();
-    }
-
-    let formatted;
-    if (amount >= 1) {
-        formatted = amount.toFixed(6);
-    } else if (amount >= 0.01) {
-        formatted = amount.toFixed(6);
-    } else if (amount >= 0.0001) {
-        formatted = amount.toFixed(8);
-    } else {
-        formatted = amount.toFixed(8);
-    }
-
-    return parseFloat(formatted).toString();
+function formatCryptoAmount(amount, crypto) {
+    const decimalsByCrypto = {
+        "RLT": 6,
+        "RST": 6,
+        "HMT": 6,
+        "XRP": 6,
+        "ALGO": 6,
+        "TRX": 8,
+        "DOGE": 4,
+        "BTC": 10,
+        "ETH": 8,
+        "BNB": 8,
+        "POL": 8,
+        "SOL": 8,
+        "LTC": 8
+    };
+    let decimals = decimalsByCrypto[crypto] ?? 8;
+    let value = Number(amount).toFixed(decimals);
+    value = value.replace(/\.?0+$/, "");
+    return value;
 }
+
+
 
 function formatBlockTime(timeInMinutes) {
     if (!timeInMinutes || timeInMinutes <= 0) return '<img src="icons/clock.png" alt="clock" class="clock-icon">10m 0s';
-    
+
     const totalSeconds = Math.round(timeInMinutes * 60);
     const minutes = Math.floor(totalSeconds / 60);
     const seconds = totalSeconds % 60;
-    
+
     return `<img src="icons/clock.png" alt="clock" class="clock-icon">${minutes}m ${seconds}s`;
 }
 
@@ -670,7 +667,7 @@ function initializeSecretButton() {
     if (secretButton && secretOverlay && countdown) {
         const audio = new Audio('secret.mp3');
         audio.preload = 'auto';
-        
+
         let countdownInterval = null;
 
         secretButton.addEventListener('click', function (e) {
@@ -680,7 +677,7 @@ function initializeSecretButton() {
 
             audio.currentTime = 0;
             audio.play().catch(error => {
-                
+
             });
 
             let count = 3;
@@ -709,7 +706,7 @@ function initializeSecretButton() {
                     clearInterval(countdownInterval);
                     countdownInterval = null;
                 }
-                
+
                 secretOverlay.classList.add('hidden');
                 audio.pause();
                 audio.currentTime = 0;
@@ -721,23 +718,23 @@ function initializeSecretButton() {
 function updatePricesTable() {
     const tableBody = document.getElementById('pricesTableBody');
     const lastUpdateElement = document.getElementById('pricesLastUpdate');
-    
+
     if (!tableBody) return;
-    
+
     tableBody.innerHTML = '';
-    
+
     const tradableCryptos = Object.entries(cryptoInfo)
         .filter(([crypto, info]) => !info.isGameToken && cryptoPrices[crypto])
         .sort(([a], [b]) => cryptoInfo[a].order - cryptoInfo[b].order);
-    
+
     tradableCryptos.forEach(([crypto, info]) => {
         const prices = cryptoPrices[crypto];
         const usdPrice = prices?.usd || 0;
         const eurPrice = prices?.eur || 0;
-        
+
         const row = document.createElement('tr');
         row.className = 'hover:bg-opacity-50 transition-all duration-200';
-        
+
         row.innerHTML = `
             <td class="py-2 px-3">
                 <div class="coin-name-mini">
@@ -752,10 +749,10 @@ function updatePricesTable() {
                 <span class="price-value">€${eurPrice ? formatNumber(eurPrice, null, false, 'eur') : 'N/A'}</span>
             </td>
         `;
-        
+
         tableBody.appendChild(row);
     });
-    
+
     if (lastUpdateElement && pricesLastUpdated > 0) {
         const date = new Date(pricesLastUpdated);
         const timeString = date.toLocaleTimeString();
@@ -763,45 +760,50 @@ function updatePricesTable() {
     }
 }
 
-function formatWithdrawalAmount(amount) {
-    if (isNaN(amount) || amount == null) return '0';
-    
-    let formatted = parseFloat(amount.toFixed(8)).toString();
-    
-    if (amount % 1 === 0) {
-        return Math.floor(amount).toString();
-    }
-    
-    if (formatted.includes('.')) {
-        formatted = formatted.replace(/\.?0+$/, '');
-    }
-    
-    return formatted;
+function formatWithdrawalAmount(amount, crypto = null) {
+    if (isNaN(amount) || amount === null) return "0";
+    const decimalsByCrypto = {
+        "RLT": 6,
+        "RST": 6,
+        "HMT": 6,
+        "XRP": 6,
+        "ALGO": 6,
+        "TRX": 8,
+        "DOGE": 4,
+        "BTC": 10,
+        "ETH": 8,
+        "BNB": 8,
+        "POL": 8,
+        "SOL": 8,
+        "LTC": 8
+    };
+    let maxDecimals = decimalsByCrypto[crypto] ?? 8;
+    return amount.toFixed(maxDecimals);
 }
 
 function updateWithdrawalsTable() {
     const tableBody = document.getElementById('withdrawalsTableBody');
-    
+
     if (!tableBody || !withdrawalMinimums) return;
-    
+
     tableBody.innerHTML = '';
-    
+
     const cryptosWithWithdrawal = Object.entries(withdrawalMinimums)
         .filter(([crypto]) => cryptoInfo[crypto] && crypto !== 'LTC')
         .sort(([a], [b]) => cryptoInfo[a].order - cryptoInfo[b].order);
-    
+
     cryptosWithWithdrawal.forEach(([crypto, minAmount]) => {
         const info = cryptoInfo[crypto];
         const prices = cryptoPrices[crypto];
         const usdPrice = prices?.usd || 0;
         const eurPrice = prices?.eur || (usdPrice && eurToUsdRate > 0 ? usdPrice / eurToUsdRate : 0);
-        
+
         const usdValue = usdPrice > 0 ? minAmount * usdPrice : 0;
         const eurValue = eurPrice > 0 ? minAmount * eurPrice : 0;
-        
+
         const row = document.createElement('tr');
         row.className = 'hover:bg-opacity-50 transition-all duration-200';
-        
+
         row.innerHTML = `
             <td class="py-2 px-3">
                 <div class="coin-name-mini">
@@ -810,7 +812,7 @@ function updateWithdrawalsTable() {
                 </div>
             </td>
             <td class="py-2 px-3 text-center">
-                <span class="withdrawal-value">${formatWithdrawalAmount(minAmount)}</span>
+                <span class="withdrawal-value">${formatCryptoAmount(minAmount, crypto)}</span>
             </td>
             <td class="py-2 px-3 text-center">
                 <span class="price-value">$${usdValue > 0 ? formatNumber(usdValue, null, false, 'usd') : 'N/A'}</span>
@@ -819,15 +821,15 @@ function updateWithdrawalsTable() {
                 <span class="price-value">${eurValue > 0 ? '€' + formatNumber(eurValue, null, false, 'eur') : 'N/A'}</span>
             </td>
         `;
-        
+
         tableBody.appendChild(row);
     });
-    
+
     if (cryptoInfo['LTC']) {
         const info = cryptoInfo['LTC'];
         const row = document.createElement('tr');
         row.className = 'hover:bg-opacity-50 transition-all duration-200';
-        
+
         row.innerHTML = `
             <td class="py-2 px-3">
                 <div class="coin-name-mini">
@@ -839,7 +841,7 @@ function updateWithdrawalsTable() {
                 Withdrawable Soon
             </td>
         `;
-        
+
         tableBody.appendChild(row);
     }
 
@@ -847,7 +849,7 @@ function updateWithdrawalsTable() {
         const info = cryptoInfo['ALGO'];
         const row = document.createElement('tr');
         row.className = 'hover:bg-opacity-50 transition-all duration-200';
-        
+
         row.innerHTML = `
             <td class="py-2 px-3">
                 <div class="coin-name-mini">
@@ -859,7 +861,7 @@ function updateWithdrawalsTable() {
                 Withdrawable Soon
             </td>
         `;
-        
+
         tableBody.appendChild(row);
     }
 }
@@ -927,7 +929,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         }
 
         if (networkDataTextarea) {
-            networkDataTextarea.addEventListener('input', function() {
+            networkDataTextarea.addEventListener('input', function () {
                 saveUserData();
                 calculateEarnings();
             });
