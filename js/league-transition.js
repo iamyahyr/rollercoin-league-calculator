@@ -403,7 +403,7 @@ function displayTransitionResults(currentMaxEarnings, nextMinEarnings, currentMa
             breakEvenDisplay = `
                 <div class="power-recommendation">
                     ${formatPowerDisplayLimited(breakEvenPower)}
-                    ${exceedsMax ? '<div class="break-even-warning">⚠️ Must advance more leagues</div>' : ''}
+                    ${exceedsMax ? '<div class="break-even-warning">Must advance more leagues</div>' : ''}
                 </div>
             `;
         }
