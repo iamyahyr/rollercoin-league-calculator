@@ -1030,3 +1030,82 @@ body {
         box-shadow: 0 0 8px rgba(3, 225, 228, 0.6), 0 0 12px rgba(3, 225, 228, 0.3);
     }
 }
+
+.league-mode-button {
+    display: inline-block;
+    background: transparent;
+    border: 2px solid #a0a3bd;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 10px;
+    font-weight: 700;
+    text-align: center;
+    color: #a0a3bd;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: none;
+}
+
+.league-mode-button:hover {
+    border-color: #03e1e4;
+    color: #03e1e4;
+    box-shadow: 0 0 8px rgba(3, 225, 228, 0.3);
+}
+
+.league-mode-button:active {
+    transform: scale(0.98);
+}
+
+.league-option-card.selected {
+    border-color: #03e1e4 !important;
+    box-shadow: 0 0 16px rgba(3, 225, 228, 0.5), inset 0 0 8px rgba(3, 225, 228, 0.1) !important;
+    transform: scale(1.02);
+}
+
+#leagueModal::-webkit-scrollbar {
+    width: 8px;
+}
+
+#leagueModal::-webkit-scrollbar-track {
+    background: #1a1c29;
+    border-radius: 4px;
+}
+
+#leagueModal::-webkit-scrollbar-thumb {
+    background: linear-gradient(145deg, #4a9eff 0%, #03e1e4 100%);
+    border-radius: 4px;
+}
+
+#leagueModal::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(145deg, #03e1e4 0%, #4a9eff 100%);
+}
+
+#leagueModal {
+    animation: fadeInModal 0.2s ease-out;
+}
+
+@keyframes fadeInModal {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+#leagueModal > div {
+    animation: slideInModal 0.3s ease-out;
+}
+
+@keyframes slideInModal {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}

@@ -65,17 +65,28 @@
                         </div>
 
                         <div class="text-center">
-                            <div id="leagueBadge" class="league-badge bronze inline-block">
-                                YOUR LEAGUE: BRONZE I
+                            <div class="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
+                                <div id="leagueBadge" class="league-badge bronze">
+                                    YOUR LEAGUE: BRONZE I
+                                </div>
+
+                                <button id="changeLeagueBtn" type="button" class="league-mode-button whitespace-nowrap">
+                                    <span id="leagueModeText">AUTO LEAGUE</span>
+                                </button>
                             </div>
+
+                            <p class="text-[11px] text-gray-400 mt-2">
+                                Optional: choose your league manually for more precise projections.
+                            </p>
                         </div>
+
 
                         <div id="powerError" class="error-message hidden">
                             Invalid mining power value
                         </div>
                     </div>
 
-                    <div class="rollercoin-card p-6">
+                    <div class="rollercoin-card p-6 flex flex-col">
                         <h2 class="text-lg rollercoin-title mb-3 font-bold">
                             NETWORK DATA
                             <div class="tooltip-container">
@@ -86,13 +97,15 @@
                             </div>
                         </h2>
                         <label class="block rollercoin-label mb-2">Paste network data:</label>
-                        <textarea id="networkData" class="w-full rollercoin-input font-mono resize-none"
-                            rows="4"></textarea>
+                        <textarea id="networkData"
+                            class="w-full rollercoin-input font-mono resize-none flex-1 min-h-[120px]"></textarea>
 
-                        <div id="networkError" class="error-message hidden">
+                        <div id="networkError" class="error-message hidden mt-3">
                             Unable to parse network data. Please check format.
                         </div>
                     </div>
+
+
                 </div>
 
 
@@ -271,8 +284,171 @@
         </div>
     </div>
 
+    <div id="leagueModal"
+        class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-[9999] hidden">
+        <div
+            class="bg-gradient-to-b from-[#1f2135] to-[#1a1c29] border-2 border-cyan-400 rounded-xl max-w-4xl w-full mx-4 shadow-2xl">
+            <div class="relative flex items-center justify-center px-6 py-4 border-b-2 border-gray-700">
+                <h3 class="text-base font-bold text-cyan-400 uppercase tracking-wide">
+                    Select Your League
+                </h3>
+                <button id="closeLeagueModal"
+                    class="absolute right-6 text-gray-400 hover:text-white text-2xl leading-none px-2 transition-colors">
+                    ×
+                </button>
+            </div>
+
+            <div class="p-5 max-h-[65vh] overflow-y-auto space-y-3">
+                <div id="autoLeagueOption"
+                    class="flex items-center gap-3 p-3 rounded-lg border-2 border-cyan-500 bg-gradient-to-r from-[#1a2332] to-[#1e2738] cursor-pointer hover:border-cyan-300 hover:shadow-lg hover:shadow-cyan-500/20 transition-all">
+                    <img id="autoLeagueIcon" src="leagues/bronze_1.png" alt="Auto"
+                        class="w-12 h-12 rounded-lg object-cover border-2 border-cyan-400 shadow-md">
+                    <div class="flex-1">
+                        <p class="text-sm font-bold text-cyan-300 uppercase tracking-wide">Automatic (Recommended)
+                        </p>
+                        <p id="autoLeagueText" class="text-[11px] text-gray-400 mt-0.5">
+                            Currently: <span class="text-cyan-300 font-semibold">Bronze I</span> · Auto-detected by
+                            power
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3 my-4">
+                    <div class="flex-1 h-px bg-gradient-to-r from-transparent via-gray-600 to-transparent"></div>
+                    <span class="text-xs text-gray-500 uppercase tracking-wide font-semibold">Manual Selection</span>
+                    <div class="flex-1 h-px bg-gradient-to-r from-transparent via-gray-600 to-transparent"></div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3" id="leagueOptionsGrid">
+                    <div class="league-option-card flex flex-col items-center gap-2 p-3 rounded-lg border-2 border-[#cd7f32] bg-gradient-to-br from-[#1a1c29] to-[#252027] cursor-pointer hover:border-[#e69556] hover:shadow-lg hover:shadow-orange-900/30 transition-all"
+                        data-league="BRONZE I">
+                        <img src="leagues/bronze_1.png" alt="Bronze I"
+                            class="w-12 h-12 rounded-md object-cover shadow-md">
+                        <p class="text-xs font-bold text-[#cd7f32] uppercase tracking-wide">Bronze I</p>
+                        <p class="text-[10px] text-gray-400">0 PH/s - 5 PH/s</p>
+                    </div>
+
+                    <div class="league-option-card flex flex-col items-center gap-2 p-3 rounded-lg border-2 border-[#cd7f32] bg-gradient-to-br from-[#1a1c29] to-[#252027] cursor-pointer hover:border-[#e69556] hover:shadow-lg hover:shadow-orange-900/30 transition-all"
+                        data-league="BRONZE II">
+                        <img src="leagues/bronze_2.png" alt="Bronze II"
+                            class="w-12 h-12 rounded-md object-cover shadow-md">
+                        <p class="text-xs font-bold text-[#cd7f32] uppercase tracking-wide">Bronze II</p>
+                        <p class="text-[10px] text-gray-400">5 PH/s - 30 PH/s</p>
+                    </div>
+
+                    <div class="league-option-card flex flex-col items-center gap-2 p-3 rounded-lg border-2 border-[#cd7f32] bg-gradient-to-br from-[#1a1c29] to-[#252027] cursor-pointer hover:border-[#e69556] hover:shadow-lg hover:shadow-orange-900/30 transition-all"
+                        data-league="BRONZE III">
+                        <img src="leagues/bronze_3.png" alt="Bronze III"
+                            class="w-12 h-12 rounded-md object-cover shadow-md">
+                        <p class="text-xs font-bold text-[#cd7f32] uppercase tracking-wide">Bronze III</p>
+                        <p class="text-[10px] text-gray-400">30 PH/s - 100 PH/s</p>
+                    </div>
+
+                    <div class="league-option-card flex flex-col items-center gap-2 p-3 rounded-lg border-2 border-[#c0c0c0] bg-gradient-to-br from-[#1a1c29] to-[#1f2135] cursor-pointer hover:border-[#e0e0e0] hover:shadow-lg hover:shadow-gray-400/20 transition-all"
+                        data-league="SILVER I">
+                        <img src="leagues/silver_1.png" alt="Silver I"
+                            class="w-12 h-12 rounded-md object-cover shadow-md">
+                        <p class="text-xs font-bold text-[#c0c0c0] uppercase tracking-wide">Silver I</p>
+                        <p class="text-[10px] text-gray-400">100 PH/s - 200 PH/s</p>
+                    </div>
+
+                    <div class="league-option-card flex flex-col items-center gap-2 p-3 rounded-lg border-2 border-[#c0c0c0] bg-gradient-to-br from-[#1a1c29] to-[#1f2135] cursor-pointer hover:border-[#e0e0e0] hover:shadow-lg hover:shadow-gray-400/20 transition-all"
+                        data-league="SILVER II">
+                        <img src="leagues/silver_2.png" alt="Silver II"
+                            class="w-12 h-12 rounded-md object-cover shadow-md">
+                        <p class="text-xs font-bold text-[#c0c0c0] uppercase tracking-wide">Silver II</p>
+                        <p class="text-[10px] text-gray-400">200 PH/s - 500 PH/s</p>
+                    </div>
+
+                    <div class="league-option-card flex flex-col items-center gap-2 p-3 rounded-lg border-2 border-[#c0c0c0] bg-gradient-to-br from-[#1a1c29] to-[#1f2135] cursor-pointer hover:border-[#e0e0e0] hover:shadow-lg hover:shadow-gray-400/20 transition-all"
+                        data-league="SILVER III">
+                        <img src="leagues/silver_3.png" alt="Silver III"
+                            class="w-12 h-12 rounded-md object-cover shadow-md">
+                        <p class="text-xs font-bold text-[#c0c0c0] uppercase tracking-wide">Silver III</p>
+                        <p class="text-[10px] text-gray-400">500 PH/s - 1 EH/s</p>
+                    </div>
+
+                    <div class="league-option-card flex flex-col items-center gap-2 p-3 rounded-lg border-2 border-[#ffd700] bg-gradient-to-br from-[#1a1c29] to-[#2a2517] cursor-pointer hover:border-[#ffe44d] hover:shadow-lg hover:shadow-yellow-600/30 transition-all"
+                        data-league="GOLD I">
+                        <img src="leagues/gold_1.png" alt="Gold I" class="w-12 h-12 rounded-md object-cover shadow-md">
+                        <p class="text-xs font-bold text-[#ffd700] uppercase tracking-wide">Gold I</p>
+                        <p class="text-[10px] text-gray-400">1 EH/s - 2 EH/s</p>
+                    </div>
+
+                    <div class="league-option-card flex flex-col items-center gap-2 p-3 rounded-lg border-2 border-[#ffd700] bg-gradient-to-br from-[#1a1c29] to-[#2a2517] cursor-pointer hover:border-[#ffe44d] hover:shadow-lg hover:shadow-yellow-600/30 transition-all"
+                        data-league="GOLD II">
+                        <img src="leagues/gold_2.png" alt="Gold II" class="w-12 h-12 rounded-md object-cover shadow-md">
+                        <p class="text-xs font-bold text-[#ffd700] uppercase tracking-wide">Gold II</p>
+                        <p class="text-[10px] text-gray-400">2 EH/s - 5 EH/s</p>
+                    </div>
+
+                    <div class="league-option-card flex flex-col items-center gap-2 p-3 rounded-lg border-2 border-[#ffd700] bg-gradient-to-br from-[#1a1c29] to-[#2a2517] cursor-pointer hover:border-[#ffe44d] hover:shadow-lg hover:shadow-yellow-600/30 transition-all"
+                        data-league="GOLD III">
+                        <img src="leagues/gold_3.png" alt="Gold III"
+                            class="w-12 h-12 rounded-md object-cover shadow-md">
+                        <p class="text-xs font-bold text-[#ffd700] uppercase tracking-wide">Gold III</p>
+                        <p class="text-[10px] text-gray-400">5 EH/s - 15 EH/s</p>
+                    </div>
+
+                    <div class="league-option-card flex flex-col items-center gap-2 p-3 rounded-lg border-2 border-[#e5e4e2] bg-gradient-to-br from-[#1a1c29] to-[#252731] cursor-pointer hover:border-[#f5f5f3] hover:shadow-lg hover:shadow-slate-400/20 transition-all"
+                        data-league="PLATINUM I">
+                        <img src="leagues/platinum_1.png" alt="Platinum I"
+                            class="w-12 h-12 rounded-md object-cover shadow-md">
+                        <p class="text-xs font-bold text-[#e5e4e2] uppercase tracking-wide">Platinum I</p>
+                        <p class="text-[10px] text-gray-400">15 EH/s - 50 EH/s</p>
+                    </div>
+
+                    <div class="league-option-card flex flex-col items-center gap-2 p-3 rounded-lg border-2 border-[#e5e4e2] bg-gradient-to-br from-[#1a1c29] to-[#252731] cursor-pointer hover:border-[#f5f5f3] hover:shadow-lg hover:shadow-slate-400/20 transition-all"
+                        data-league="PLATINUM II">
+                        <img src="leagues/platinum_2.png" alt="Platinum II"
+                            class="w-12 h-12 rounded-md object-cover shadow-md">
+                        <p class="text-xs font-bold text-[#e5e4e2] uppercase tracking-wide">Platinum II</p>
+                        <p class="text-[10px] text-gray-400">50 EH/s - 100 EH/s</p>
+                    </div>
+
+                    <div class="league-option-card flex flex-col items-center gap-2 p-3 rounded-lg border-2 border-[#e5e4e2] bg-gradient-to-br from-[#1a1c29] to-[#252731] cursor-pointer hover:border-[#f5f5f3] hover:shadow-lg hover:shadow-slate-400/20 transition-all"
+                        data-league="PLATINUM III">
+                        <img src="leagues/platinum_3.png" alt="Platinum III"
+                            class="w-12 h-12 rounded-md object-cover shadow-md">
+                        <p class="text-xs font-bold text-[#e5e4e2] uppercase tracking-wide">Platinum III</p>
+                        <p class="text-[10px] text-gray-400">100 EH/s - 200 EH/s</p>
+                    </div>
+
+                    <div class="league-option-card flex flex-col items-center gap-2 p-3 rounded-lg border-2 border-[#03e1e4] bg-gradient-to-br from-[#1a1c29] to-[#0f2429] cursor-pointer hover:border-[#4ef4f6] hover:shadow-lg hover:shadow-cyan-500/30 transition-all"
+                        data-league="DIAMOND I">
+                        <img src="leagues/diamond_1.png" alt="Diamond I"
+                            class="w-12 h-12 rounded-md object-cover shadow-md">
+                        <p class="text-xs font-bold text-[#03e1e4] uppercase tracking-wide">Diamond I</p>
+                        <p class="text-[10px] text-gray-400">200 EH/s - 400 EH/s</p>
+                    </div>
+
+                    <div class="league-option-card flex flex-col items-center gap-2 p-3 rounded-lg border-2 border-[#03e1e4] bg-gradient-to-br from-[#1a1c29] to-[#0f2429] cursor-pointer hover:border-[#4ef4f6] hover:shadow-lg hover:shadow-cyan-500/30 transition-all"
+                        data-league="DIAMOND II">
+                        <img src="leagues/diamond_2.png" alt="Diamond II"
+                            class="w-12 h-12 rounded-md object-cover shadow-md">
+                        <p class="text-xs font-bold text-[#03e1e4] uppercase tracking-wide">Diamond II</p>
+                        <p class="text-[10px] text-gray-400">400 EH/s - 10 ZH/s</p>
+                    </div>
+
+                    <div class="league-option-card flex flex-col items-center gap-2 p-3 rounded-lg border-2 border-[#03e1e4] bg-gradient-to-br from-[#1a1c29] to-[#0f2429] cursor-pointer hover:border-[#4ef4f6] hover:shadow-lg hover:shadow-cyan-500/30 transition-all"
+                        data-league="DIAMOND III">
+                        <img src="leagues/diamond_3.png" alt="Diamond III"
+                            class="w-12 h-12 rounded-md object-cover shadow-md">
+                        <p class="text-xs font-bold text-[#03e1e4] uppercase tracking-wide">Diamond III</p>
+                        <p class="text-[10px] text-gray-400">10 ZH/s - ∞</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="px-6 py-4 border-t-2 border-gray-700 text-right bg-gradient-to-t from-[#1a1c29] to-transparent">
+                <button id="leagueModalCancel"
+                    class="text-xs px-4 py-2 rounded-md border-2 border-gray-600 text-gray-300 hover:bg-gray-700 hover:border-gray-500 transition-all font-semibold uppercase tracking-wide">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script src="js/app.js"></script>
 </body>
-
 </html>
-

@@ -2,6 +2,8 @@ let leagues = [];
 let leagueRewards = {};
 let blockTimes = {};
 let withdrawalMinimums = {};
+let leagueMode = 'auto';
+let manualLeagueName = null;
 
 async function loadConfig() {
     const [leaguesRes, rewardsRes, blocksRes, minRes] = await Promise.all([
@@ -44,6 +46,48 @@ let networkPowers = {};
 let currentLeague = null;
 let userPowerGH = 0;
 let pricesLastUpdated = 0;
+
+function loadLeaguePreferences() {
+    try {
+        const savedMode = localStorage.getItem('leagueMode');
+        const savedLeague = localStorage.getItem('manualLeagueName');
+        
+        if (savedMode === 'manual' && savedLeague) {
+            leagueMode = 'manual';
+            manualLeagueName = savedLeague;
+        } else {
+            leagueMode = 'auto';
+            manualLeagueName = null;
+        }
+    } catch (e) {
+        leagueMode = 'auto';
+        manualLeagueName = null;
+    }
+}
+
+function saveLeaguePreferences() {
+    try {
+        localStorage.setItem('leagueMode', leagueMode);
+        if (manualLeagueName) {
+            localStorage.setItem('manualLeagueName', manualLeagueName);
+        } else {
+            localStorage.removeItem('manualLeagueName');
+        }
+    } catch (e) {
+
+    }
+}
+
+function updateLeagueModeButton() {
+    const modeText = document.getElementById('leagueModeText');
+    if (!modeText) return;
+    
+    if (leagueMode === 'manual' && manualLeagueName) {
+        modeText.textContent = 'MANUAL';
+    } else {
+        modeText.textContent = 'AUTO LEAGUE';
+    }
+}
 
 function saveUserData() {
     try {
@@ -113,6 +157,16 @@ function getLeagueForPower(powerGH) {
 
 function updateLeagueFromPower() {
     try {
+        if (leagueMode === 'manual' && manualLeagueName) {
+            const manualLeague = leagues.find(l => l.name === manualLeagueName);
+            if (manualLeague) {
+                currentLeague = manualLeague;
+                updateLeagueBadge(manualLeague.name, manualLeague.class);
+                updateUserLeagueRewards();
+                return;
+            }
+        }
+
         const powerInput = document.getElementById('miningPower');
         const unitSelect = document.getElementById('powerUnit');
 
@@ -312,9 +366,19 @@ function calculateEarnings() {
         if (!power || power <= 0 || isNaN(power)) {
             document.getElementById('noDataMessage').style.display = 'block';
             document.getElementById('earningsTableBody').innerHTML = '';
-            currentLeague = { name: 'BRONZE I', class: 'bronze' };
-            updateLeagueBadge('BRONZE I', 'bronze');
-            updateUserLeagueRewards();
+            
+            if (leagueMode === 'manual' && manualLeagueName) {
+                const manualLeague = leagues.find(l => l.name === manualLeagueName);
+                if (manualLeague) {
+                    currentLeague = manualLeague;
+                    updateLeagueBadge(manualLeague.name, manualLeague.class);
+                    updateUserLeagueRewards();
+                }
+            } else {
+                currentLeague = { name: 'BRONZE I', class: 'bronze' };
+                updateLeagueBadge('BRONZE I', 'bronze');
+                updateUserLeagueRewards();
+            }
             return;
         }
 
@@ -330,7 +394,17 @@ function calculateEarnings() {
             return;
         }
 
-        currentLeague = getLeagueForPower(userPowerGH);
+        if (leagueMode === 'manual' && manualLeagueName) {
+            const manualLeague = leagues.find(l => l.name === manualLeagueName);
+            if (manualLeague) {
+                currentLeague = manualLeague;
+            } else {
+                currentLeague = getLeagueForPower(userPowerGH);
+            }
+        } else {
+            currentLeague = getLeagueForPower(userPowerGH);
+        }
+        
         updateLeagueBadge(currentLeague.name, currentLeague.class);
         updateUserLeagueRewards();
 
@@ -643,8 +717,6 @@ function formatCryptoAmount(amount, crypto) {
     return value;
 }
 
-
-
 function formatBlockTime(timeInMinutes) {
     if (!timeInMinutes || timeInMinutes <= 0) return '<img src="icons/clock.png" alt="clock" class="clock-icon">10m 0s';
 
@@ -866,6 +938,111 @@ function updateWithdrawalsTable() {
     }
 }
 
+function initializeLeagueModal() {
+    const changeLeagueBtn = document.getElementById('changeLeagueBtn');
+    const leagueModal = document.getElementById('leagueModal');
+    const closeModalBtn = document.getElementById('closeLeagueModal');
+    const cancelBtn = document.getElementById('leagueModalCancel');
+    const autoOption = document.getElementById('autoLeagueOption');
+    const leagueOptions = document.querySelectorAll('.league-option-card');
+
+    if (!changeLeagueBtn || !leagueModal) return;
+
+    changeLeagueBtn.addEventListener('click', function() {
+        leagueModal.classList.remove('hidden');
+        
+        updateAutoLeagueDisplay();
+        
+        if (leagueMode === 'auto') {
+            autoOption?.classList.add('selected');
+        } else {
+            autoOption?.classList.remove('selected');
+        }
+        
+        leagueOptions.forEach(opt => {
+            const leagueName = opt.dataset.league;
+            if (leagueMode === 'manual' && leagueName === manualLeagueName) {
+                opt.classList.add('selected');
+            } else {
+                opt.classList.remove('selected');
+            }
+        });
+    });
+
+    function closeModal() {
+        leagueModal.classList.add('hidden');
+    }
+
+    if (closeModalBtn) closeModalBtn.addEventListener('click', closeModal);
+    if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
+    
+    leagueModal.addEventListener('click', function(e) {
+        if (e.target === leagueModal) closeModal();
+    });
+
+    if (autoOption) {
+        autoOption.addEventListener('click', function() {
+            leagueMode = 'auto';
+            manualLeagueName = null;
+            saveLeaguePreferences();
+            updateLeagueModeButton();
+            updateLeagueFromPower();
+            calculateEarnings();
+            closeModal();
+        });
+    }
+
+    leagueOptions.forEach(opt => {
+        opt.addEventListener('click', function() {
+            const selectedLeague = this.dataset.league;
+            leagueMode = 'manual';
+            manualLeagueName = selectedLeague;
+            saveLeaguePreferences();
+            updateLeagueModeButton();
+            
+            const manualLeagueObj = leagues.find(l => l.name === selectedLeague);
+            if (manualLeagueObj) {
+                currentLeague = manualLeagueObj;
+                updateLeagueBadge(manualLeagueObj.name, manualLeagueObj.class);
+                updateUserLeagueRewards();
+                calculateEarnings();
+            }
+            
+            closeModal();
+        });
+    });
+}
+
+function updateAutoLeagueDisplay() {
+    const autoLeagueIcon = document.getElementById('autoLeagueIcon');
+    const autoLeagueText = document.getElementById('autoLeagueText');
+    
+    if (!autoLeagueIcon || !autoLeagueText) return;
+    
+    const powerInput = document.getElementById('miningPower');
+    const unitSelect = document.getElementById('powerUnit');
+    
+    let detectedLeague = { name: 'BRONZE I', class: 'bronze' };
+    
+    if (powerInput && unitSelect) {
+        const power = parseFloat(powerInput.value);
+        const unit = unitSelect.value;
+        
+        if (power && power > 0 && !isNaN(power)) {
+            const powerGH = convertToGH(power, unit);
+            detectedLeague = getLeagueForPower(powerGH);
+        }
+    }
+    
+    const detectedLeagueImage = getLeagueImagePath(detectedLeague.name);
+    autoLeagueIcon.src = detectedLeagueImage;
+    autoLeagueIcon.alt = detectedLeague.name;
+    
+    autoLeagueText.innerHTML = `Currently: <span class="text-cyan-300 font-semibold">${detectedLeague.name}</span> · Auto-detected by power`;
+}
+
+
+
 document.addEventListener('DOMContentLoaded', function () {
     const tooltipContainers = document.querySelectorAll('.tooltip-container');
 
@@ -905,6 +1082,9 @@ document.addEventListener('DOMContentLoaded', function () {
 document.addEventListener('DOMContentLoaded', async function () {
     try {
         await loadConfig();
+
+        loadLeaguePreferences();
+        updateLeagueModeButton();
 
         const miningPowerInput = document.getElementById('miningPower');
         const powerUnitSelect = document.getElementById('powerUnit');
@@ -990,6 +1170,8 @@ document.addEventListener('DOMContentLoaded', async function () {
                 displayEarnings();
             });
         }
+
+        initializeLeagueModal();
 
         initializeSecretButton();
         updateLeagueFromPower();
