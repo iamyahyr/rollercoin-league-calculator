@@ -51,7 +51,7 @@ function loadLeaguePreferences() {
     try {
         const savedMode = localStorage.getItem('leagueMode');
         const savedLeague = localStorage.getItem('manualLeagueName');
-        
+
         if (savedMode === 'manual' && savedLeague) {
             leagueMode = 'manual';
             manualLeagueName = savedLeague;
@@ -81,7 +81,7 @@ function saveLeaguePreferences() {
 function updateLeagueModeButton() {
     const modeText = document.getElementById('leagueModeText');
     if (!modeText) return;
-    
+
     if (leagueMode === 'manual' && manualLeagueName) {
         modeText.textContent = 'MANUAL';
     } else {
@@ -366,7 +366,7 @@ function calculateEarnings() {
         if (!power || power <= 0 || isNaN(power)) {
             document.getElementById('noDataMessage').style.display = 'block';
             document.getElementById('earningsTableBody').innerHTML = '';
-            
+
             if (leagueMode === 'manual' && manualLeagueName) {
                 const manualLeague = leagues.find(l => l.name === manualLeagueName);
                 if (manualLeague) {
@@ -404,7 +404,7 @@ function calculateEarnings() {
         } else {
             currentLeague = getLeagueForPower(userPowerGH);
         }
-        
+
         updateLeagueBadge(currentLeague.name, currentLeague.class);
         updateUserLeagueRewards();
 
@@ -948,17 +948,17 @@ function initializeLeagueModal() {
 
     if (!changeLeagueBtn || !leagueModal) return;
 
-    changeLeagueBtn.addEventListener('click', function() {
+    changeLeagueBtn.addEventListener('click', function () {
         leagueModal.classList.remove('hidden');
-        
+
         updateAutoLeagueDisplay();
-        
+
         if (leagueMode === 'auto') {
             autoOption?.classList.add('selected');
         } else {
             autoOption?.classList.remove('selected');
         }
-        
+
         leagueOptions.forEach(opt => {
             const leagueName = opt.dataset.league;
             if (leagueMode === 'manual' && leagueName === manualLeagueName) {
@@ -975,13 +975,13 @@ function initializeLeagueModal() {
 
     if (closeModalBtn) closeModalBtn.addEventListener('click', closeModal);
     if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
-    
-    leagueModal.addEventListener('click', function(e) {
+
+    leagueModal.addEventListener('click', function (e) {
         if (e.target === leagueModal) closeModal();
     });
 
     if (autoOption) {
-        autoOption.addEventListener('click', function() {
+        autoOption.addEventListener('click', function () {
             leagueMode = 'auto';
             manualLeagueName = null;
             saveLeaguePreferences();
@@ -993,13 +993,13 @@ function initializeLeagueModal() {
     }
 
     leagueOptions.forEach(opt => {
-        opt.addEventListener('click', function() {
+        opt.addEventListener('click', function () {
             const selectedLeague = this.dataset.league;
             leagueMode = 'manual';
             manualLeagueName = selectedLeague;
             saveLeaguePreferences();
             updateLeagueModeButton();
-            
+
             const manualLeagueObj = leagues.find(l => l.name === selectedLeague);
             if (manualLeagueObj) {
                 currentLeague = manualLeagueObj;
@@ -1007,7 +1007,7 @@ function initializeLeagueModal() {
                 updateUserLeagueRewards();
                 calculateEarnings();
             }
-            
+
             closeModal();
         });
     });
@@ -1016,28 +1016,28 @@ function initializeLeagueModal() {
 function updateAutoLeagueDisplay() {
     const autoLeagueIcon = document.getElementById('autoLeagueIcon');
     const autoLeagueText = document.getElementById('autoLeagueText');
-    
+
     if (!autoLeagueIcon || !autoLeagueText) return;
-    
+
     const powerInput = document.getElementById('miningPower');
     const unitSelect = document.getElementById('powerUnit');
-    
+
     let detectedLeague = { name: 'BRONZE I', class: 'bronze' };
-    
+
     if (powerInput && unitSelect) {
         const power = parseFloat(powerInput.value);
         const unit = unitSelect.value;
-        
+
         if (power && power > 0 && !isNaN(power)) {
             const powerGH = convertToGH(power, unit);
             detectedLeague = getLeagueForPower(powerGH);
         }
     }
-    
+
     const detectedLeagueImage = getLeagueImagePath(detectedLeague.name);
     autoLeagueIcon.src = detectedLeagueImage;
     autoLeagueIcon.alt = detectedLeague.name;
-    
+
     autoLeagueText.innerHTML = `Currently: <span class="text-cyan-300 font-semibold">${detectedLeague.name}</span> · Auto-detected by power`;
 }
 
@@ -1112,6 +1112,20 @@ document.addEventListener('DOMContentLoaded', async function () {
             networkDataTextarea.addEventListener('input', function () {
                 saveUserData();
                 calculateEarnings();
+            });
+        }
+
+        if (networkDataTextarea) {
+            networkDataTextarea.addEventListener('paste', function () {
+                setTimeout(function () {
+                    const earningsTableCard = document.querySelector('.rollercoin-card.p-6.mb-6');
+                    if (earningsTableCard) {
+                        earningsTableCard.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                }, 150);
             });
         }
 
