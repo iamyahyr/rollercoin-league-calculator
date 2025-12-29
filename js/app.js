@@ -861,8 +861,8 @@ function updateWithdrawalsTable() {
     tableBody.innerHTML = '';
 
     const cryptosWithWithdrawal = Object.entries(withdrawalMinimums)
-        .filter(([crypto]) => cryptoInfo[crypto] && crypto !== 'LTC')
-        .sort(([a], [b]) => cryptoInfo[a].order - cryptoInfo[b].order);
+    .filter(([crypto]) => cryptoInfo[crypto])
+    .sort(([a], [b]) => cryptoInfo[a].order - cryptoInfo[b].order);
 
     cryptosWithWithdrawal.forEach(([crypto, minAmount]) => {
         const info = cryptoInfo[crypto];
@@ -896,26 +896,6 @@ function updateWithdrawalsTable() {
 
         tableBody.appendChild(row);
     });
-
-    if (cryptoInfo['LTC']) {
-        const info = cryptoInfo['LTC'];
-        const row = document.createElement('tr');
-        row.className = 'hover:bg-opacity-50 transition-all duration-200';
-
-        row.innerHTML = `
-            <td class="py-2 px-3">
-                <div class="coin-name-mini">
-                    <img src="crypto_icons/ltc.png" alt="LTC" class="coin-icon-mini" onerror="this.style.display='none';">
-                    <span style="color: ${info.color.replace('[', '').replace(']', '')}; font-weight: 600;">LTC</span>
-                </div>
-            </td>
-            <td class="py-2 px-3 text-center coming-soon-withdrawal" colspan="3">
-                Withdrawable Soon
-            </td>
-        `;
-
-        tableBody.appendChild(row);
-    }
 
     if (cryptoInfo['ALGO']) {
         const info = cryptoInfo['ALGO'];
