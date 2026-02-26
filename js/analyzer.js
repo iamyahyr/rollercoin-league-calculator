@@ -12,7 +12,8 @@ const cryptoInfo = {
     TRX: { color: '#D3392F', name: 'TRX', order: 10, icon: 'crypto_icons/trx.png' },
     SOL: { color: '#21EBAA', name: 'SOL', order: 11, icon: 'crypto_icons/sol.png' },
     LTC: { color: '#345D9D', name: 'LTC', order: 12, icon: 'crypto_icons/ltc.png' },
-    ALGO: { color: '#FF3E9A', name: 'ALGO', order: 13, icon: 'crypto_icons/algo.png' }
+    ALGO: { color: '#FF3E9A', name: 'ALGO', order: 13, icon: 'crypto_icons/algo.png' },
+    USDT: { color: '#26A17B', name: 'USDT', order: 14, icon: 'crypto_icons/usdt.png' }
 };
 
 let networkDataHistory = [];

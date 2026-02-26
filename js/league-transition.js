@@ -15,7 +15,8 @@ const cryptoInfo = {
     TRX: { color: '#D3392F', name: 'TRX', isGameToken: false, order: 10 },
     SOL: { color: '#21EBAA', name: 'SOL', isGameToken: false, order: 11 },
     LTC: { color: '#345D9D', name: 'LTC', isGameToken: false, order: 12 },
-    ALGO: { color: '#FF3E9A', name: 'ALGO', isGameToken: false, order: 13 }
+    ALGO: { color: '#FF3E9A', name: 'ALGO', isGameToken: false, order: 13 },
+    USDT: { color: '#26A17B', name: 'USDT', isGameToken: false, order: 14 }
 };
 
 let currentLeague = null;
@@ -141,7 +142,11 @@ function formatNumber(num, decimals = null, isPerBlock = false, mode = 'crypto',
             }
         }
 
-        const fourDecimalCoins = ['POL', 'XRP', 'DOGE', 'TRX', 'SOL', 'LTC', 'RST', 'RLT', 'ALGO', 'HMT']; 
+        if (crypto === 'USDT') {
+            return num.toFixed(6);
+        }
+
+        const fourDecimalCoins = ['POL', 'XRP', 'DOGE', 'TRX', 'SOL', 'LTC', 'RST', 'RLT', 'ALGO', 'HMT'];
 
         if (crypto && fourDecimalCoins.includes(crypto)) {
             return num.toFixed(4);
@@ -526,7 +531,7 @@ async function fetchCryptoPrices() {
         const cryptoIds = {
             BTC: 'bitcoin', ETH: 'ethereum', LTC: 'litecoin', BNB: 'binancecoin',
             POL: 'polygon-ecosystem-token', XRP: 'ripple', DOGE: 'dogecoin',
-            TRX: 'tron', SOL: 'solana', ALGO: 'algorand' 
+            TRX: 'tron', SOL: 'solana', ALGO: 'algorand', USDT: 'tether'
         };
 
         const ids = Object.values(cryptoIds).join(',');

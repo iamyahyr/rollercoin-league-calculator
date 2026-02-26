@@ -36,7 +36,8 @@ const cryptoInfo = {
     TRX: { color: '[#D3392F]', bgColor: 'red-500', name: 'TRX', isGameToken: false, order: 10 },
     SOL: { color: '[#21EBAA]', bgColor: 'green-400', name: 'SOL', isGameToken: false, order: 11 },
     LTC: { color: '[#345D9D]', bgColor: 'blue-600', name: 'LTC', isGameToken: false, order: 12 },
-    ALGO: { color: '[#FF3E9A]', bgColor: 'pink-500', name: 'ALGO', isGameToken: false, order: 13 }
+    ALGO: { color: '[#FF3E9A]', bgColor: 'pink-500', name: 'ALGO', isGameToken: false, order: 13 },
+    USDT: { color: '[#26A17B]', bgColor: 'emerald-500', name: 'USDT', isGameToken: false, order: 14 }
 };
 
 let cryptoPrices = {};
@@ -196,7 +197,7 @@ async function fetchCryptoPrices() {
         const cryptoIds = {
             BTC: 'bitcoin', ETH: 'ethereum', LTC: 'litecoin', BNB: 'binancecoin',
             POL: 'polygon-ecosystem-token', XRP: 'ripple', DOGE: 'dogecoin',
-            TRX: 'tron', SOL: 'solana', ALGO: 'algorand'
+            TRX: 'tron', SOL: 'solana', ALGO: 'algorand', USDT: 'tether'
         };
 
         const ids = Object.values(cryptoIds).join(',');
@@ -285,6 +286,7 @@ function formatNumber(num, decimals = null, isPerBlock = false, mode = "crypto",
         "HMT": 6,
         "XRP": 6,
         "ALGO": 6,
+        "USDT": 6,
         "TRX": 8,
         "DOGE": 4,
         "BTC": 10,
@@ -702,6 +704,7 @@ function formatCryptoAmount(amount, crypto) {
         "HMT": 6,
         "XRP": 6,
         "ALGO": 6,
+        "USDT": 6,
         "TRX": 8,
         "DOGE": 4,
         "BTC": 10,
@@ -840,6 +843,7 @@ function formatWithdrawalAmount(amount, crypto = null) {
         "HMT": 6,
         "XRP": 6,
         "ALGO": 6,
+        "USDT": 6,
         "TRX": 8,
         "DOGE": 4,
         "BTC": 10,
