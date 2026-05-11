@@ -240,30 +240,52 @@ function initializePriceUpdates() {
 function parseNetworkData(data) {
     try {
         const powers = {};
-        const lines = data.split('\n');
-        let currentCrypto = null;
+        const lines = data
+            .split('\n')
+            .map(line => line.trim())
+            .filter(Boolean);
 
-        for (let raw of lines) {
-            let line = raw.trim();
-            if (!line) continue;
+        function parseNetworkPowerLine(line) {
+            const powerMatch = line.match(/([0-9][0-9.,]*)\s*([A-Za-z]+)\/s/i);
+            if (!powerMatch) return null;
 
-            const match = Object.keys(cryptoInfo).find(crypto => {
-                const alt = crypto === 'POL' ? 'MATIC' : crypto;
-                return line.toUpperCase() === crypto || line.toUpperCase() === alt;
-            });
+            const value = parseFloat(powerMatch[1].replace(/,/g, '.'));
+            const unit = powerMatch[2].toUpperCase();
 
-            if (match) {
-                currentCrypto = match;
-            } else if (currentCrypto) {
-                const powerMatch = line.match(/([0-9.,]+)\s*([A-Za-z]+)\/s/i);
-                if (powerMatch) {
-                    const value = parseFloat(powerMatch[1].replace(',', '.'));
-                    const unit = powerMatch[2].toUpperCase();
-                    if (!isNaN(value) && value > 0) {
-                        powers[currentCrypto] = { value, unit };
-                        currentCrypto = null;
-                    }
-                }
+            if (isNaN(value) || value <= 0) return null;
+
+            return { value, unit };
+        }
+
+        function normalizeCryptoSymbol(symbol) {
+            const upperSymbol = (symbol || '').trim().toUpperCase();
+            if (!upperSymbol) return null;
+            if (upperSymbol === 'MATIC') return 'POL';
+            return cryptoInfo[upperSymbol] ? upperSymbol : null;
+        }
+
+        function detectNetworkCoinSymbol(powerLineIndex) {
+            const minIndex = Math.max(0, powerLineIndex - 4);
+
+            for (let index = powerLineIndex - 1; index >= minIndex; index--) {
+                const candidate = lines[index];
+                if (!candidate || candidate.includes('%') || /^active users$/i.test(candidate)) continue;
+
+                const normalizedSymbol = normalizeCryptoSymbol(candidate);
+                if (normalizedSymbol) return normalizedSymbol;
+            }
+
+            return null;
+        }
+
+        for (let index = 0; index < lines.length; index++) {
+            if (!/^power$/i.test(lines[index])) continue;
+
+            const powerData = parseNetworkPowerLine(lines[index + 1] || '');
+            const crypto = detectNetworkCoinSymbol(index);
+
+            if (powerData && crypto) {
+                powers[crypto] = powerData;
             }
         }
 
