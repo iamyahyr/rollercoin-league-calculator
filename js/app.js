@@ -4,16 +4,159 @@ let blockTimes = {};
 let withdrawalMinimums = {};
 let leagueMode = 'auto';
 let manualLeagueName = null;
+const MINARYGANAR_API_BASE = 'https://api.minaryganar.com';
+const MINARYGANAR_CALCULATOR_API = `${MINARYGANAR_API_BASE}/api/public/rollercoin/calculator`;
+let minaryganarNetworkPowers = {};
+let minaryganarDataStatus = {
+    config: false,
+    rewards: false,
+    blockDurations: false,
+    networkPower: false,
+    networkPowerSource: 'none',
+    blockDurationsUpdatedAt: null,
+    networkPowerUpdatedAt: null
+};
+
+function isObject(value) {
+    return value !== null && typeof value === 'object' && !Array.isArray(value);
+}
+
+async function fetchJsonWithTimeout(url, timeoutMs = 8000) {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+    try {
+        const response = await fetch(url, {
+            headers: { Accept: 'application/json' },
+            cache: 'no-store',
+            signal: controller.signal
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+
+        return await response.json();
+    } finally {
+        clearTimeout(timeoutId);
+    }
+}
+
+function normalizeMinaryganarNetworkSnapshot(snapshot) {
+    const normalized = {};
+    if (!isObject(snapshot)) return normalized;
+
+    Object.entries(snapshot).forEach(([leagueName, rawCoins]) => {
+        if (leagueName.startsWith('_') || !isObject(rawCoins)) return;
+
+        const coins = {};
+        Object.entries(rawCoins).forEach(([coin, rawPower]) => {
+            const valueGH = Number(rawPower);
+            if (cryptoInfo[coin] && Number.isFinite(valueGH) && valueGH > 0) {
+                coins[coin] = { value: valueGH, unit: 'GH/s' };
+            }
+        });
+
+        if (Object.keys(coins).length > 0) {
+            normalized[leagueName.trim().toUpperCase()] = coins;
+        }
+    });
+
+    return normalized;
+}
+
+function getAutomaticNetworkForLeague(leagueName) {
+    if (!leagueName) return {};
+    return minaryganarNetworkPowers[leagueName.trim().toUpperCase()] || {};
+}
+
+function normalizeLeagueConfig(remoteLeagues) {
+    if (!Array.isArray(remoteLeagues)) return [];
+
+    return remoteLeagues
+        .filter(league => isObject(league) && league.name)
+        .map(league => {
+            const name = String(league.name).trim().toUpperCase();
+            const localLeague = leagues.find(item => item.name === name);
+            const family = name.split(/\s+/)[0].toLowerCase();
+            return {
+                ...league,
+                name,
+                class: league.class || localLeague?.class || family
+            };
+        });
+}
+
+function formatSourceTimestamp(value) {
+    if (!value) return '';
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return '';
+    return date.toLocaleString(undefined, { dateStyle: 'short', timeStyle: 'short' });
+}
+
+function updateMinaryganarStatus() {
+    const statusElement = document.getElementById('networkDataSource');
+    const badgeElement = document.getElementById('dataSourceBadge');
+    if (!statusElement && !badgeElement) return;
+
+    const liveItems = [];
+    if (minaryganarDataStatus.networkPower) liveItems.push('network');
+    if (minaryganarDataStatus.blockDurations) liveItems.push('block times');
+    if (minaryganarDataStatus.rewards) liveItems.push('rewards');
+
+    const networkUpdated = formatSourceTimestamp(minaryganarDataStatus.networkPowerUpdatedAt);
+    const blockUpdated = formatSourceTimestamp(minaryganarDataStatus.blockDurationsUpdatedAt);
+
+    if (liveItems.length > 0) {
+        const timestamps = [
+            networkUpdated ? `network ${networkUpdated}` : '',
+            blockUpdated ? `blocks ${blockUpdated}` : ''
+        ].filter(Boolean).join(' · ');
+        const suffix = timestamps ? ` · ${timestamps}` : '';
+        if (statusElement) {
+            statusElement.textContent = `✓ Live data from Minar y Ganar: ${liveItems.join(', ')}${suffix}`;
+            statusElement.className = 'text-xs text-emerald-300 mb-3';
+        }
+        if (badgeElement) {
+            badgeElement.textContent = 'MINAR Y GANAR · LIVE';
+            badgeElement.className = 'text-cyan-400 font-bold text-xs uppercase tracking-wide';
+        }
+        return;
+    }
+
+    if (Object.keys(minaryganarNetworkPowers).length > 0) {
+        const snapshotUpdated = formatSourceTimestamp(minaryganarDataStatus.networkPowerUpdatedAt);
+        if (statusElement) {
+            statusElement.textContent = `Saved Minar y Ganar network snapshot${snapshotUpdated ? ` · last update ${snapshotUpdated}` : ''}. Paste new network data below to refresh it.`;
+            statusElement.className = 'text-xs text-yellow-300 mb-3';
+        }
+        if (badgeElement) {
+            badgeElement.textContent = 'MINAR Y GANAR · SNAPSHOT';
+            badgeElement.className = 'text-yellow-300 font-bold text-xs uppercase tracking-wide';
+        }
+        return;
+    }
+
+    if (statusElement) {
+        statusElement.textContent = 'Automatic Minar y Ganar network unavailable here. Paste network data below; local rewards and block times remain available.';
+        statusElement.className = 'text-xs text-yellow-300 mb-3';
+    }
+    if (badgeElement) {
+        badgeElement.textContent = 'LOCAL FALLBACK';
+        badgeElement.className = 'text-yellow-300 font-bold text-xs uppercase tracking-wide';
+    }
+}
 
 async function loadConfig() {
-    const [leaguesRes, rewardsRes, blocksRes, minRes] = await Promise.all([
+    const [leaguesRes, rewardsRes, blocksRes, minRes, networkRes] = await Promise.all([
         fetch('data/leagues.json'),
         fetch('data/leagueRewards.json'),
         fetch('data/blockTimes.json'),
-        fetch('data/withdrawalMinimums.json')
+        fetch('data/withdrawalMinimums.json'),
+        fetch('data/networkPower.json')
     ]);
 
-    if (!leaguesRes.ok || !rewardsRes.ok || !blocksRes.ok || !minRes.ok) {
+    if (!leaguesRes.ok || !rewardsRes.ok || !blocksRes.ok || !minRes.ok || !networkRes.ok) {
         throw new Error('Error loading JSON');
     }
 
@@ -21,6 +164,88 @@ async function loadConfig() {
     leagueRewards = await rewardsRes.json();
     blockTimes = await blocksRes.json();
     withdrawalMinimums = await minRes.json();
+    const localNetworkSnapshot = await networkRes.json();
+    minaryganarNetworkPowers = normalizeMinaryganarNetworkSnapshot(localNetworkSnapshot);
+    minaryganarDataStatus.config = false;
+    minaryganarDataStatus.rewards = false;
+    minaryganarDataStatus.blockDurations = false;
+    minaryganarDataStatus.networkPower = false;
+    minaryganarDataStatus.blockDurationsUpdatedAt = null;
+    minaryganarDataStatus.networkPowerSource = Object.keys(minaryganarNetworkPowers).length > 0 ? 'local' : 'none';
+    minaryganarDataStatus.networkPowerUpdatedAt = localNetworkSnapshot?._updated_at || null;
+
+    const remoteResults = await Promise.allSettled([
+        fetchJsonWithTimeout(`${MINARYGANAR_CALCULATOR_API}/config`),
+        fetchJsonWithTimeout(`${MINARYGANAR_CALCULATOR_API}/rewards`),
+        fetchJsonWithTimeout(`${MINARYGANAR_CALCULATOR_API}/block-durations`),
+        fetchJsonWithTimeout(`${MINARYGANAR_CALCULATOR_API}/network-power`)
+    ]);
+
+    const remoteConfig = remoteResults[0].status === 'fulfilled' ? remoteResults[0].value : null;
+    const remoteRewards = remoteResults[1].status === 'fulfilled' ? remoteResults[1].value : null;
+    const remoteBlockDurations = remoteResults[2].status === 'fulfilled' ? remoteResults[2].value : null;
+    const remoteNetworkPower = remoteResults[3].status === 'fulfilled' ? remoteResults[3].value : null;
+
+    if (isObject(remoteConfig)) {
+        if (Array.isArray(remoteConfig.leagues) && remoteConfig.leagues.length > 0) {
+            const normalizedLeagues = normalizeLeagueConfig(remoteConfig.leagues);
+            if (normalizedLeagues.length > 0) {
+                leagues = normalizedLeagues;
+            }
+            minaryganarDataStatus.config = true;
+        }
+        if (isObject(remoteConfig.coinTimes)) {
+            blockTimes = { ...blockTimes, ...remoteConfig.coinTimes };
+        }
+        if (isObject(remoteConfig.withdrawableCoins)) {
+            withdrawalMinimums = remoteConfig.withdrawableCoins;
+        }
+    }
+
+    if (isObject(remoteRewards) && Object.keys(remoteRewards).length > 0) {
+        leagueRewards = remoteRewards;
+        minaryganarDataStatus.rewards = true;
+    }
+
+    if (isObject(remoteBlockDurations)) {
+        const liveBlockTimes = {};
+        Object.entries(remoteBlockDurations).forEach(([coin, rawSeconds]) => {
+            if (coin.startsWith('_')) return;
+            const seconds = Number(rawSeconds);
+            if (Number.isFinite(seconds) && seconds > 0) {
+                liveBlockTimes[coin] = seconds / 60;
+            }
+        });
+
+        if (Object.keys(liveBlockTimes).length > 0) {
+            blockTimes = { ...blockTimes, ...liveBlockTimes };
+            minaryganarDataStatus.blockDurations = true;
+            minaryganarDataStatus.blockDurationsUpdatedAt = remoteBlockDurations._updated_at || null;
+        }
+    }
+
+    if (isObject(remoteNetworkPower)) {
+        minaryganarNetworkPowers = normalizeMinaryganarNetworkSnapshot(remoteNetworkPower);
+        if (Object.keys(minaryganarNetworkPowers).length > 0) {
+            minaryganarDataStatus.networkPower = true;
+            minaryganarDataStatus.networkPowerSource = 'live';
+            minaryganarDataStatus.networkPowerUpdatedAt = remoteNetworkPower._updated_at || null;
+        }
+    }
+
+    updateMinaryganarStatus();
+}
+
+function initializeMinaryganarRefresh() {
+    setInterval(async () => {
+        try {
+            await loadConfig();
+            updateLeagueFromPower();
+            calculateEarnings();
+        } catch (e) {
+            // Keep the last local/live snapshot if a refresh fails.
+        }
+    }, 5 * 60 * 1000);
 }
 
 const cryptoInfo = {
@@ -406,12 +631,6 @@ function calculateEarnings() {
             return;
         }
 
-        if (!networkData.trim()) {
-            document.getElementById('noDataMessage').style.display = 'block';
-            document.getElementById('earningsTableBody').innerHTML = '';
-            return;
-        }
-
         userPowerGH = convertToGH(power, unit);
         if (userPowerGH <= 0) {
             document.getElementById('powerError').classList.remove('hidden');
@@ -429,11 +648,22 @@ function calculateEarnings() {
             currentLeague = getLeagueForPower(userPowerGH);
         }
 
+        const automaticNetwork = getAutomaticNetworkForLeague(currentLeague?.name);
+        const hasAutomaticNetwork = Object.keys(automaticNetwork).length > 0;
+
+        if (!networkData.trim() && !hasAutomaticNetwork) {
+            document.getElementById('noDataMessage').style.display = 'block';
+            document.getElementById('earningsTableBody').innerHTML = '';
+            return;
+        }
+
         updateLeagueBadge(currentLeague.name, currentLeague.class);
         updateUserLeagueRewards();
 
         try {
-            networkPowers = parseNetworkData(networkData);
+            // El snapshot de Minar y Ganar es la fuente principal. El texto pegado solo se usa
+            // como fallback cuando no existe snapshot para la liga seleccionada.
+            networkPowers = hasAutomaticNetwork ? automaticNetwork : parseNetworkData(networkData);
         } catch (e) {
             document.getElementById('networkError').classList.remove('hidden');
             return;
@@ -1196,6 +1426,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         initializeSecretButton();
         updateLeagueFromPower();
         initializePriceUpdates();
+        initializeMinaryganarRefresh();
         calculateEarnings();
         updatePricesTable();
         updateWithdrawalsTable();
