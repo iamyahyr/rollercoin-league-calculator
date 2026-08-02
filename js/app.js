@@ -87,64 +87,32 @@ function normalizeLeagueConfig(remoteLeagues) {
         });
 }
 
-function formatSourceTimestamp(value) {
-    if (!value) return '';
-    const date = new Date(value);
-    if (Number.isNaN(date.getTime())) return '';
-    return date.toLocaleString(undefined, { dateStyle: 'short', timeStyle: 'short' });
+function getLatestDataTimestamp() {
+    const timestamps = [
+        minaryganarDataStatus.networkPowerUpdatedAt,
+        minaryganarDataStatus.blockDurationsUpdatedAt
+    ]
+        .map(value => Date.parse(value || ''))
+        .filter(value => Number.isFinite(value));
+
+    return timestamps.length > 0 ? new Date(Math.max(...timestamps)) : null;
+}
+
+function formatUpdatedDate(value) {
+    if (!value || Number.isNaN(value.getTime())) return '--';
+    return value.toLocaleDateString('en-US', {
+        timeZone: 'UTC',
+        month: 'short',
+        day: '2-digit',
+        year: 'numeric'
+    }).replace(',', '').toUpperCase();
 }
 
 function updateMinaryganarStatus() {
-    const statusElement = document.getElementById('networkDataSource');
     const badgeElement = document.getElementById('dataSourceBadge');
-    if (!statusElement && !badgeElement) return;
-
-    const liveItems = [];
-    if (minaryganarDataStatus.networkPower) liveItems.push('network');
-    if (minaryganarDataStatus.blockDurations) liveItems.push('block times');
-    if (minaryganarDataStatus.rewards) liveItems.push('rewards');
-
-    const networkUpdated = formatSourceTimestamp(minaryganarDataStatus.networkPowerUpdatedAt);
-    const blockUpdated = formatSourceTimestamp(minaryganarDataStatus.blockDurationsUpdatedAt);
-
-    if (liveItems.length > 0) {
-        const timestamps = [
-            networkUpdated ? `network ${networkUpdated}` : '',
-            blockUpdated ? `blocks ${blockUpdated}` : ''
-        ].filter(Boolean).join(' · ');
-        const suffix = timestamps ? ` · ${timestamps}` : '';
-        if (statusElement) {
-            statusElement.textContent = `✓ Live data from Minar y Ganar: ${liveItems.join(', ')}${suffix}`;
-            statusElement.className = 'text-xs text-emerald-300 mb-3';
-        }
-        if (badgeElement) {
-            badgeElement.textContent = 'MINAR Y GANAR · LIVE';
-            badgeElement.className = 'text-cyan-400 font-bold text-xs uppercase tracking-wide';
-        }
-        return;
-    }
-
-    if (Object.keys(minaryganarNetworkPowers).length > 0) {
-        const snapshotUpdated = formatSourceTimestamp(minaryganarDataStatus.networkPowerUpdatedAt);
-        if (statusElement) {
-            statusElement.textContent = `Saved Minar y Ganar network snapshot${snapshotUpdated ? ` · last update ${snapshotUpdated}` : ''}. Paste new network data below to refresh it.`;
-            statusElement.className = 'text-xs text-yellow-300 mb-3';
-        }
-        if (badgeElement) {
-            badgeElement.textContent = 'MINAR Y GANAR · SNAPSHOT';
-            badgeElement.className = 'text-yellow-300 font-bold text-xs uppercase tracking-wide';
-        }
-        return;
-    }
-
-    if (statusElement) {
-        statusElement.textContent = 'Automatic Minar y Ganar network unavailable here. Paste network data below; local rewards and block times remain available.';
-        statusElement.className = 'text-xs text-yellow-300 mb-3';
-    }
-    if (badgeElement) {
-        badgeElement.textContent = 'LOCAL FALLBACK';
-        badgeElement.className = 'text-yellow-300 font-bold text-xs uppercase tracking-wide';
-    }
+    if (!badgeElement) return;
+    badgeElement.textContent = formatUpdatedDate(getLatestDataTimestamp());
+    badgeElement.className = 'text-cyan-400 font-bold text-xs uppercase tracking-wide';
 }
 
 async function loadConfig() {
@@ -661,8 +629,8 @@ function calculateEarnings() {
         updateUserLeagueRewards();
 
         try {
-            // El snapshot de Minar y Ganar es la fuente principal. El texto pegado solo se usa
-            // como fallback cuando no existe snapshot para la liga seleccionada.
+            // Los datos automáticos son la fuente principal. El texto pegado solo se usa
+            // como fallback cuando no existe información para la liga seleccionada.
             networkPowers = hasAutomaticNetwork ? automaticNetwork : parseNetworkData(networkData);
         } catch (e) {
             document.getElementById('networkError').classList.remove('hidden');
@@ -830,14 +798,7 @@ function displayEarnings() {
             const row = document.createElement('tr');
             row.className = 'hover:bg-opacity-50 transition-all duration-200';
 
-            const networkValue = networkPower.value;
-            const networkUnit = networkPower.unit;
-            let networkDisplay = `${parseFloat(networkValue.toFixed(3))} ${renderNetworkUnit(networkUnit)}`;
-
-            function renderNetworkUnit(unit) {
-                unit = unit.replace(/\/s/i, '');
-                return unit.charAt(0).toUpperCase() + "h/s";
-            }
+            const networkDisplay = formatNetworkPower(networkTotalGH);
 
             row.innerHTML = `
                 <td class="p-4"><div class="earnings-number" style="color: white; text-align: center;">${networkDisplay}</div></td>
